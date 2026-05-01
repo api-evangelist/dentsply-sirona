@@ -1,0 +1,61 @@
+{
+  "@context": {
+    "@vocab": "https://schema.org/",
+    "ds": "https://open.dscore.com/",
+    "Patient": {
+      "@id": "https://schema.org/Patient",
+      "@context": {
+        "id": "https://schema.org/identifier",
+        "givenName": "https://schema.org/givenName",
+        "familyName": "https://schema.org/familyName",
+        "birthDate": "https://schema.org/birthDate",
+        "gender": "https://schema.org/gender"
+      }
+    },
+    "Practice": {
+      "@id": "https://schema.org/Dentist",
+      "@context": {
+        "id": "https://schema.org/identifier",
+        "name": "https://schema.org/name",
+        "address": "https://schema.org/address"
+      }
+    },
+    "Lab": {
+      "@id": "https://schema.org/Organization",
+      "@context": {
+        "id": "https://schema.org/identifier",
+        "name": "https://schema.org/name",
+        "address": "https://schema.org/address"
+      }
+    },
+    "Order": {
+      "@id": "https://schema.org/Order",
+      "@context": {
+        "id": "https://schema.org/orderNumber",
+        "patient": "https://schema.org/customer",
+        "practice": "https://schema.org/seller",
+        "lab": "https://schema.org/provider",
+        "status": "https://schema.org/orderStatus"
+      }
+    },
+    "Scan": {
+      "@id": "ds:scan",
+      "@context": {
+        "id": "https://schema.org/identifier",
+        "patient": "https://schema.org/about",
+        "captureDate": "https://schema.org/dateCreated",
+        "device": "https://schema.org/usedDevice",
+        "format": "https://schema.org/encodingFormat"
+      }
+    },
+    "Image": {
+      "@id": "https://schema.org/MedicalImagingTechnique",
+      "@context": {
+        "id": "https://schema.org/identifier",
+        "patient": "https://schema.org/about",
+        "modality": "https://schema.org/category",
+        "captureDate": "https://schema.org/dateCreated"
+      }
+    }
+  }
+}

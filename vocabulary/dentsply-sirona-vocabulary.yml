@@ -1,0 +1,57 @@
+name: Dentsply Sirona Vocabulary
+description: >-
+  Shared vocabulary of terms used across the DS Core open platform and the
+  Dentsply Sirona Imaging modality API.
+terms:
+  - term: DS Core
+    definition: >-
+      Dentsply Sirona's cloud platform that connects practices, laboratories,
+      and DSOs through a single web-based experience.
+  - term: DS Core Enterprise
+    definition: >-
+      The DS Core subscription tier that adds features for Dental Service
+      Organizations such as user provisioning and SSO.
+  - term: Practice Management System
+    definition: >-
+      Software that manages dental practice operations such as scheduling,
+      billing, and patient records, integrated with DS Core via the API.
+  - term: Lab Management System
+    definition: >-
+      Software that manages dental laboratory operations such as case intake,
+      design, and shipping, integrated with DS Core via the API.
+  - term: DSO
+    definition: >-
+      A Dental Service Organization that operates multiple practices and
+      consumes DS Core Enterprise integrations.
+  - term: Patient
+    definition: >-
+      A person whose dental records, scans, and images are stored and shared
+      through DS Core.
+  - term: Order
+    definition: >-
+      A lab case routed from a practice to a laboratory through DS Core,
+      including scans, prescriptions, and comments.
+  - term: Scan
+    definition: >-
+      A digital intraoral or model scan captured with Dentsply Sirona devices
+      such as Primescan and shared via DS Core.
+  - term: Imaging Modality
+    definition: >-
+      A class of imaging devices such as intraoral sensors and cameras
+      addressed by the DSIO modality API.
+  - term: CEREC
+    definition: >-
+      Dentsply Sirona's CAD/CAM dental restoration system that integrates
+      with DS Core for cloud-based design workflows.
+  - term: Primescan
+    definition: >-
+      Dentsply Sirona's intraoral scanner family that uploads scans to DS
+      Core for collaborative workflows.
+  - term: SSO
+    definition: >-
+      Single Sign-On user authentication offered to DS Core Enterprise
+      customers for federated access.
+  - term: User Provisioning
+    definition: >-
+      The process of creating, updating, and deactivating DS Core users from
+      an external identity system.

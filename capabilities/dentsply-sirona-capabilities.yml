@@ -1,0 +1,32 @@
+name: Dentsply Sirona Capabilities
+description: >-
+  Capabilities exposed through the DS Core open platform and the Dentsply
+  Sirona Imaging modality API.
+capabilities:
+  - name: Patient Synchronization
+    description: Synchronize patient records between PMS and DS Core.
+    api: dentsply-sirona:ds-core-api
+  - name: Scan and Image Exchange
+    description: Exchange intraoral scans and images between DS Core and PMS.
+    api: dentsply-sirona:ds-core-api
+  - name: Lab Order Routing
+    description: Route lab cases from DS Core to LMS providers automatically.
+    api: dentsply-sirona:ds-core-api
+  - name: Lab Communication
+    description: Exchange comments, approvals, and files between DS Core and LMS.
+    api: dentsply-sirona:ds-core-api
+  - name: Enterprise SSO
+    description: Federate user authentication for DS Core Enterprise tenants.
+    api: dentsply-sirona:ds-core-api
+  - name: User Provisioning
+    description: Create and manage DS Core users from external identity systems.
+    api: dentsply-sirona:ds-core-api
+  - name: Sandbox Access
+    description: Explore the API in a development environment before production.
+    api: dentsply-sirona:ds-core-api
+  - name: Intraoral Capture
+    description: Drive Dentsply Sirona intraoral sensors and cameras programmatically.
+    api: dentsply-sirona:dsio-modality-api
+  - name: Modality Integration
+    description: Integrate Dentsply Sirona imaging hardware with third-party software.
+    api: dentsply-sirona:dsio-modality-api
