@@ -4,94 +4,43 @@ schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main
 provider: Dentsply Sirona
 providerId: dentsply-sirona
 created: '2026-05-04'
-modified: '2026-05-04'
+modified: '2026-05-05'
+reconciled: false
+notes: Dentsply Sirona does not publish a public rate-limit table for the DS Core or Intraoral Imaging
+  Modality APIs. Limits are coordinated with integration partners during the DS Core developer onboarding.
+  Headers and response codes below are scaffold defaults pending direct doc reconciliation.
 tags:
-  - CAD/CAM
-  - CEREC
   - Dental
   - DS Core
   - Imaging
-  - Intraoral Imaging
-  - Lab Management
   - Practice Management
   - Rate Limiting
-  - Quotas
-  - Throttling
-description: Machine-readable rate limit definitions for the Dentsply Sirona API surface. Captures per-tier
-  quotas, burst behavior, response signaling, and recovery semantics. Defaults are scaffold values to
-  be replaced with published provider limits.
-headers:
-  limit: X-RateLimit-Limit
-  remaining: X-RateLimit-Remaining
-  reset: X-RateLimit-Reset
-  retryAfter: Retry-After
-  policy: RateLimit-Policy
+description: Per-partner rate limits set during DS Core developer onboarding. Imaging-modality endpoints
+  carry separate concurrency budgets aligned to upload throughput rather than RPS, since each scan or
+  X-ray series is a multi-megabyte upload.
+sources:
+  - https://developer.dscore.com/
 responseCodes:
   throttled: 429
   quotaExceeded: 429
   serviceUnavailable: 503
 limits:
-  - tier: free
-    name: Free Tier Default
-    scope: api-key
-    metric: requests_per_minute
-    limit: 10
-    burst: 20
-    timeFrame: minute
-    applies:
-      - DS Core API
-      - Dentsply Sirona Intraoral Imaging Modality API
-  - tier: free
-    name: Free Tier Monthly Quota
-    scope: api-key
-    metric: requests_per_month
-    limit: 1000
-    timeFrame: month
-    applies:
-      - DS Core API
-      - Dentsply Sirona Intraoral Imaging Modality API
-  - tier: professional
-    name: Professional Tier Default
-    scope: api-key
-    metric: requests_per_minute
-    limit: 100
-    burst: 200
-    timeFrame: minute
-    applies:
-      - DS Core API
-      - Dentsply Sirona Intraoral Imaging Modality API
-  - tier: professional
-    name: Professional Tier Monthly Quota
-    scope: api-key
-    metric: requests_per_month
-    limit: 100000
-    timeFrame: month
-    applies:
-      - DS Core API
-      - Dentsply Sirona Intraoral Imaging Modality API
-  - tier: enterprise
-    name: Enterprise Negotiated Limit
+  - tier: partner
+    name: Partner-Negotiated Limit
     scope: contract
-    metric: requests_per_minute
-    limit: 1000
-    burst: 5000
-    timeFrame: minute
+    metric: varies
+    limit: 'set per DS Core developer agreement'
     applies:
       - DS Core API
       - Dentsply Sirona Intraoral Imaging Modality API
 policies:
+  - name: Per-Partner Onboarding
+    description: TPS, concurrent uploads, and daily quotas are agreed during DS Core developer onboarding.
+  - name: Imaging Upload Backpressure
+    description: Imaging endpoints throttle on concurrent multipart uploads rather than per-second request
+      rate; clients should expect 429 / 503 when the upload pipeline saturates.
   - name: Backoff Strategy
-    description: Clients should implement exponential backoff with jitter, honoring the Retry-After header
-      when present.
-  - name: Burst Handling
-    description: Short bursts above the steady-state limit are tolerated up to the documented burst ceiling
-      before throttling engages.
-  - name: Quota Reset
-    description: Monthly quotas reset at the start of each calendar month in UTC. Per-minute and per-second
-      windows reset on a sliding-window basis.
-  - name: Fair Use
-    description: Even on uncapped enterprise tiers, sustained usage that materially impacts shared infrastructure
-      may be subject to fair-use throttling.
+    description: Clients should implement exponential backoff with jitter, honoring Retry-After when present.
 maintainers:
   - FN: Kin Lane
     email: kin@apievangelist.com

@@ -8,36 +8,40 @@ alignedWith:
   dataSpecUrl: https://focus.finops.org/focus-specification/v1-3/
 provider: Dentsply Sirona
 providerId: dentsply-sirona
-publisherName: Dentsply Sirona
-serviceCategory: API
+publisherName: Dentsply Sirona, Inc.
+serviceCategory: Dental Technology / Practice Management
 created: '2026-05-04'
-modified: '2026-05-04'
+modified: '2026-05-05'
+reconciled: false
+notes: Dentsply Sirona does not publish API pricing. DS Core is sold as a per-practice subscription, with
+  imaging-modality APIs included with hardware purchase. FinOps shape is SaaS subscription plus hardware
+  CapEx; API consumption is not directly billed. Reconcile against DS Core subscription invoices when available.
 tags:
-  - CAD/CAM
-  - CEREC
   - Dental
   - DS Core
-  - Imaging
-  - Intraoral Imaging
-  - Lab Management
   - Practice Management
+  - Imaging
   - FinOps
-  - Cost Management
   - FOCUS
-description: FinOps framework definition for the Dentsply Sirona API surface. Provides a FOCUS-aligned
-  mapping for cost allocation, usage measurement, and unit-economics reporting across the provider's APIs.
+description: 'FOCUS-aligned FinOps for Dentsply Sirona DS Core and intraoral imaging APIs: SaaS subscription
+  for the DS Core cloud platform plus modality-bundled API access on hardware. No per-call API charges.'
+sources:
+  - https://www.dentsplysirona.com/
+  - https://developer.dscore.com/
 principles:
   - name: Visibility
-    description: Make API consumption costs visible to engineering, product, and finance teams in near
-      real-time.
+    description: Track DS Core seat and practice counts via the practice admin console; reconcile imaging
+      storage and partner-app entitlements against the DS Core subscription terms.
   - name: Allocation
-    description: Tag every chargeable API call with the consuming team, environment, application, and
-      feature so cost can be allocated.
+    description: Allocate DS Core spend by practice location and modality (CEREC, Primescan, Schick) for
+      multi-site dental groups; tag partner-app installs to the practice that activated them.
   - name: Optimization
-    description: Continuously evaluate request patterns, caching, batching, and tier selection to reduce
-      cost per useful unit of work.
+    description: Right-size DS Core seat counts during quarterly reviews, archive old imaging studies
+      to manage storage, and consolidate partner-app subscriptions to avoid double-paying for overlapping
+      capabilities.
   - name: Accountability
-    description: Establish budget owners and chargeback or showback flows for each consuming team.
+    description: Practice owner / DSO operations leader owns DS Core renewal and seat hygiene; integration
+      partners own usage of their respective DS Core APIs.
 domains:
   - name: Understand Usage and Cost
     capabilities:
@@ -54,66 +58,62 @@ domains:
       - Unit Economics
   - name: Optimize Usage and Cost
     capabilities:
-      - Architecting for Cloud
       - Rate Optimization
       - Workload Optimization
-      - Cloud Sustainability
       - Licensing and SaaS
   - name: Manage the FinOps Practice
     capabilities:
-      - FinOps Practice Operations
-      - FinOps Education and Enablement
       - Invoicing and Chargeback
       - Onboarding Workloads
-      - Intersecting Disciplines
 billingModel:
-  pricingCategory: Usage-Based
+  pricingCategory: SaaS Subscription + Hardware Bundle
   billingFrequency: Monthly
   billingCurrency: USD
   chargeCategories:
-    - Usage
     - Purchase
+    - Usage
     - Tax
     - Credit
     - Adjustment
   chargeFrequency: Recurring
 focusColumns:
-  ServiceName: Dentsply Sirona
-  ServiceCategory: Developer Tools / API
+  ServiceName: DS Core API
+  ServiceCategory: Dental Technology / Practice Management
   ProviderName: Dentsply Sirona
-  PublisherName: Dentsply Sirona
-  InvoiceIssuerName: Dentsply Sirona
-  PricingCategory: Usage-Based
-  PricingUnit: request
+  PublisherName: Dentsply Sirona, Inc.
+  InvoiceIssuerName: Dentsply Sirona, Inc.
+  PricingCategory: Subscription + Hardware
+  PricingUnit: practice
   BillingCurrency: USD
-  ChargeCategory: Usage
+  ChargeCategory: Purchase
 meters:
-  - name: api_requests
-    description: Count of billable API requests
-    unit: request
+  - name: ds_core_subscription
+    description: DS Core subscription seats / practices
+    unit: month
     aggregation: sum
     dimensions:
-      - api
-      - endpoint
-      - tier
+      - practice
       - region
-      - consumer
-  - name: data_egress
-    description: Bytes returned over the network in API responses
-    unit: GB
-    aggregation: sum
+  - name: imaging_storage
+    description: Imaging storage consumed in DS Core
+    unit: GB-month
+    aggregation: max
     dimensions:
-      - api
-      - region
-      - consumer
-  - name: compute_seconds
-    description: Server-side compute consumed by the request, where applicable
-    unit: second
-    aggregation: sum
+      - practice
+  - name: modality_devices
+    description: Connected intraoral imaging modalities (Schick, Primescan, CEREC)
+    unit: device
+    aggregation: max
     dimensions:
-      - api
-      - endpoint
-      - tier
+      - practice
+      - modality_type
+  - name: partner_app_installs
+    description: Partner / ISV apps installed in a DS Core practice
+    unit: install
+    aggregation: max
+    dimensions:
+      - practice
+      - app
 apis:
   - name: DS Core API
     baseURL: https://api.dscore.com
@@ -127,9 +127,8 @@ apis:
     serviceName: DS Core API
     serviceCategory: API
   - name: Dentsply Sirona Intraoral Imaging Modality API
-    baseURL: https://api.example.com
+    baseURL: https://api.dscore.com
     tags:
-      - GitHub
       - Imaging
       - Intraoral
       - Modality
@@ -137,11 +136,11 @@ apis:
     serviceName: Dentsply Sirona Intraoral Imaging Modality API
     serviceCategory: API
 unitEconomics:
-  - name: Cost per 1K Requests
-    metric: billed_cost / (api_requests / 1000)
+  - name: Cost per Practice
+    metric: ds_core_subscription_cost / practices
     target: TBD
-  - name: Cost per Active Consumer
-    metric: billed_cost / active_consumers
+  - name: Cost per Modality Device
+    metric: ds_core_subscription_cost / modality_devices
     target: TBD
 maintainers:
   - FN: Kin Lane
