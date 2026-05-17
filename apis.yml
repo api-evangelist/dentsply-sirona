@@ -22,7 +22,7 @@ url: >-
 created: '2026-03-24'
 modified: '2026-04-28'
 specificationVersion: '0.19'
-xType: company
+kind: company
 position: Producer
 access: 3rd-Party
 apis:
@@ -48,7 +48,7 @@ apis:
     properties:
       - type: Documentation
         url: https://open.dscore.com/
-      - type: Sign Up
+      - type: SignUp
         url: https://open.dscore.com/
       - type: Marketing
         url: https://www.dentsplysirona.com/en/lp/connected-dentistry.html
@@ -110,9 +110,9 @@ common:
     url: https://www.dentsplysirona.com/en/about-dentsply-sirona/contact-us.html
   - type: Terms of Use
     url: https://www.dentsplysirona.com/en/legal-notice.html
-  - type: Privacy Policy
+  - type: PrivacyPolicy
     url: https://www.dentsplysirona.com/en/legal-notice/privacy-policy.html
-  - type: JSON-LD
+  - type: JSONLD
     url: json-ld/dentsply-sirona-context.jsonld
   - type: Vocabulary
     url: vocabulary/dentsply-sirona-vocabulary.yml
