@@ -82,6 +82,8 @@ apis:
       - FN: Dentsply Sirona Imaging
         url: https://github.com/dsimaging
 common:
+  - type: LinkedIn
+    url: https://www.linkedin.com/company/dentsplysirona
   - type: Website
     url: https://www.dentsply-sirona.com
   - type: USA Website
