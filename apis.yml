@@ -7,7 +7,7 @@ description: >-
   developer integrations through DS Core, an open cloud platform, and through
   the Dentsply Sirona Imaging modality API for intraoral imaging hardware.
 type: Index
-image: https://kinlane-productions2.s3.amazonaws.com/apis-json/apis-json-logo.jpg
+image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
 tags:
   - CAD/CAM
   - CEREC
@@ -36,7 +36,7 @@ apis:
       System (LMS) providers, and DSO enterprise solutions to integrate with DS Core
       for patient data synchronization, scan and imaging exchange, lab order routing,
       file and comment exchange, and Single Sign-On user provisioning.
-    image: https://kinlane-productions2.s3.amazonaws.com/apis-json/apis-json-logo.jpg
+    image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
     humanURL: https://open.dscore.com/
     baseURL: https://api.dscore.com
     tags:
@@ -65,7 +65,7 @@ apis:
       GitHub by the Dentsply Sirona Imaging team and are intended for software
       vendors that wish to capture, transfer, and store intraoral images from
       Dentsply Sirona devices in their own dental software.
-    image: https://kinlane-productions2.s3.amazonaws.com/apis-json/apis-json-logo.jpg
+    image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
     humanURL: https://github.com/dsimaging/dsio-modality-api
     baseURL: https://api.example.com
     tags:
