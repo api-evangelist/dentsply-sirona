@@ -49,7 +49,7 @@ apis:
     properties:
       - type: Documentation
         url: https://open.dscore.com/
-      - type: SignUp
+      - type: Signup
         url: https://open.dscore.com/
       - type: Marketing
         url: https://www.dentsplysirona.com/en/lp/connected-dentistry.html
@@ -111,7 +111,7 @@ common:
     url: https://www.dentsplysirona.com/en/about-dentsply-sirona/careers.html
   - type: Contact
     url: https://www.dentsplysirona.com/en/about-dentsply-sirona/contact-us.html
-  - type: Terms of Use
+  - type: TermsOfService
     url: https://www.dentsplysirona.com/en/legal-notice.html
   - type: PrivacyPolicy
     url: https://www.dentsplysirona.com/en/legal-notice/privacy-policy.html
