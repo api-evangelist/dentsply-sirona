@@ -83,6 +83,8 @@ apis:
       - FN: Dentsply Sirona Imaging
         url: https://github.com/dsimaging
 common:
+  - type: DomainSecurity
+    url: security/dentsply-sirona-domain-security.yml
   - type: LinkedIn
     url: https://www.linkedin.com/company/dentsplysirona
   - type: Website

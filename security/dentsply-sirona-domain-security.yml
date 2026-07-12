@@ -1,0 +1,31 @@
+generated: '2026-07-11'
+method: probed
+source: live DNS/TLS/HTTP probes of apis.yml + OpenAPI hosts
+hosts:
+- host: www.dentsply-sirona.com
+  https: true
+  tls_cert_error: '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate
+    (_ssl.c:1082)'
+  hsts: null
+- host: open.dscore.com
+  https: true
+  tls_version: TLSv1.3
+  cert_expires: Aug  1 14:47:53 2026 GMT
+  hsts: false
+- host: api.dscore.com
+  https: true
+  tls_version: TLSv1.3
+  cert_expires: Nov 26 08:27:40 2026 GMT
+  hsts: null
+domains:
+- domain: dentsply-sirona.com
+  dnssec: false
+  caa: []
+  spf: false
+  dmarc: false
+- domain: dscore.com
+  dnssec: false
+  caa: []
+  spf: true
+  dmarc: true
+  dmarc_policy: none
