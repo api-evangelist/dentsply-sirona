@@ -133,8 +133,6 @@ common:
     url: json-ld/dentsply-sirona-context.jsonld
   - type: Vocabulary
     url: vocabulary/dentsply-sirona-vocabulary.yml
-  - type: Capabilities
-    url: capabilities/dentsply-sirona-capabilities.yml
 maintainers:
   - FN: Kin Lane
     email: kin@apievangelist.com
