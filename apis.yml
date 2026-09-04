@@ -47,7 +47,7 @@ created: '2026-03-24'
 modified: '2026-04-28'
 specificationVersion: '0.23'
 kind: company
-position: Producer
+position: Producing
 access: 3rd-Party
 apis:
   - aid: dentsply-sirona:ds-core-api
