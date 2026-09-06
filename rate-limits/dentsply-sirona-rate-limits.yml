@@ -4,46 +4,54 @@ schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main
 provider: Dentsply Sirona
 providerId: dentsply-sirona
 created: '2026-05-04'
-# Provenance stamped 2026-08-11: this artifact was written by the API Evangelist
-# bulk sweep dated 2026-05-04, not harvested from the provider. See roadmap#35.
-method: generated
-modified: '2026-05-05'
-reconciled: false
-notes: Dentsply Sirona does not publish a public rate-limit table for the DS Core or Intraoral Imaging
-  Modality APIs. Limits are coordinated with integration partners during the DS Core developer onboarding.
-  Headers and response codes below are scaffold defaults pending direct doc reconciliation.
+modified: '2026-09-06'
+generated: '2026-09-06'
+method: searched
+reconciled: true
+limit_count: 0
+notes: >-
+  Rewritten 2026-09-06 by the enrichment pipeline. The previous version of this file was a
+  2026-05-04 bulk-sweep scaffold: it asserted a partner tier and 429/503 response codes that the
+  provider has never published, and it cited https://developer.dscore.com/, a host that does not
+  resolve. Those are removed. The honest finding: Dentsply Sirona publishes NO rate limits for any
+  of its four APIs. The three intraoral imaging OpenAPI documents declare no 429 response, no
+  Retry-After, and no RateLimit-* or X-RateLimit-* header on any of their 30 operations. The DS
+  Core API reference is behind the open.dscore.com partner login, so any limits it documents are
+  not publicly observable. A consumer learns the limits, if any, from a partner agreement.
+description: >-
+  No published rate limits. The two intraoral imaging APIs are LOCAL services running on the
+  practice workstation, where the binding constraint is the sensor and the workstation rather than
+  a server-side quota — the contract's own backpressure signals are 409 (device in use), 423
+  (locked while reading an exposure) and 507 (insufficient storage), not 429.
 tags:
   - Dental
   - DS Core
   - Imaging
-  - Practice Management
+  - Intraoral Imaging
   - Rate Limiting
-description: Per-partner rate limits set during DS Core developer onboarding. Imaging-modality endpoints
-  carry separate concurrency budgets aligned to upload throughput rather than RPS, since each scan or
-  X-ray series is a multi-megabyte upload.
 sources:
-  - https://developer.dscore.com/
-responseCodes:
-  throttled: 429
-  quotaExceeded: 429
-  serviceUnavailable: 503
-limits:
-  - tier: partner
-    name: Partner-Negotiated Limit
-    scope: contract
-    metric: varies
-    limit: 'set per DS Core developer agreement'
-    applies:
-      - DS Core API
-      - Dentsply Sirona Intraoral Imaging Modality API
-policies:
-  - name: Per-Partner Onboarding
-    description: TPS, concurrent uploads, and daily quotas are agreed during DS Core developer onboarding.
-  - name: Imaging Upload Backpressure
-    description: Imaging endpoints throttle on concurrent multipart uploads rather than per-second request
-      rate; clients should expect 429 / 503 when the upload pipeline saturates.
-  - name: Backoff Strategy
-    description: Clients should implement exponential backoff with jitter, honoring Retry-After when present.
+  - url: https://github.com/dsimaging/dsio-modality-api
+    checked: '2026-09-06'
+    status: 200
+    finding: no rate-limit documentation; no 429 or Retry-After in the OpenAPI
+  - url: https://github.com/dsimaging/dsio-filters-api
+    checked: '2026-09-06'
+    status: 200
+    finding: no rate-limit documentation; no 429 or Retry-After in the OpenAPI
+  - url: https://open.dscore.com/
+    checked: '2026-09-06'
+    status: 200
+    finding: developer portal renders a login/registration shell; reference is gated
+  - url: https://developer.dscore.com/
+    checked: '2026-09-06'
+    status: 000
+    finding: >-
+      does not resolve — cited as a source by the previous scaffold of this file and by the plans
+      and finops artifacts; it is not a real host
+responseCodes: {}
+responseHeaders: []
+limits: []
+policies: []
 maintainers:
   - FN: Kin Lane
     email: kin@apievangelist.com

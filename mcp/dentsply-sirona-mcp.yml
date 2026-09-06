@@ -1,0 +1,124 @@
+generated: '2026-09-06'
+method: derived
+status: candidate
+source: >-
+  openapi/dentsply-sirona-intraoral-modality-openapi.yml,
+  openapi/dentsply-sirona-intraoral-filters-openapi.yml,
+  openapi/dentsply-sirona-intraoral-exposure-openapi.yml
+notes: >-
+  Dentsply Sirona publishes no MCP server. Searched the DS Core developer portal, the dsimaging
+  GitHub organisation (3 repositories, none MCP), npm under @modelcontextprotocol and the public
+  MCP registries — nothing first-party exists. The tool list below is a CANDIDATE derived one-to-one
+  from the operationIds in the three first-party OpenAPI documents; each tool's real input contract
+  is that operation's parameters and requestBody in the spec. Nobody ships this server; it is a
+  design starting point, not a reachable agent surface.
+deployment:
+  mode: none
+  endpoint: null
+  install: null
+  package: null
+  auth: api-key
+  verified: derived
+server:
+  name: dentsply-sirona-intraoral
+  transport: null
+  url: null
+tools:
+- name: get_all_devices
+  description: List the intraoral devices the local Sensor Plugin service currently provides.
+  source_operation: openapi/dentsply-sirona-intraoral-modality-openapi.yml#getAllDevices
+- name: subscribe_devices
+  description: Subscribe to device events over Server-Sent Events.
+  source_operation: openapi/dentsply-sirona-intraoral-modality-openapi.yml#subscribeDevices
+- name: get_device_info
+  description: Get information about one intraoral device.
+  source_operation: openapi/dentsply-sirona-intraoral-modality-openapi.yml#getDeviceInfo
+- name: get_sensor_info
+  description: Get sensor information for a device.
+  source_operation: openapi/dentsply-sirona-intraoral-modality-openapi.yml#getSensorInfo
+- name: create_acquisition_session
+  description: Open an acquisition session against a device.
+  source_operation: openapi/dentsply-sirona-intraoral-modality-openapi.yml#createAcquisitionSession
+- name: get_sessions
+  description: List open acquisition sessions.
+  source_operation: openapi/dentsply-sirona-intraoral-modality-openapi.yml#getSessions
+- name: get_acquisition_session
+  description: Get one acquisition session.
+  source_operation: openapi/dentsply-sirona-intraoral-modality-openapi.yml#getAcquisitionSession
+- name: update_acquisition_session
+  description: Update an acquisition session.
+  source_operation: openapi/dentsply-sirona-intraoral-modality-openapi.yml#updateAcquisitionSession
+- name: delete_acquisition_session
+  description: Close and delete an acquisition session.
+  source_operation: openapi/dentsply-sirona-intraoral-modality-openapi.yml#deleteAcquisitionSession
+- name: get_acquisition_status
+  description: Get the current status of an acquisition session.
+  source_operation: openapi/dentsply-sirona-intraoral-modality-openapi.yml#getAcquisitionStatus
+- name: subscribe_acquisition_status
+  description: Subscribe to acquisition status events over Server-Sent Events.
+  source_operation: openapi/dentsply-sirona-intraoral-modality-openapi.yml#subscribeAcquisitionStatus
+- name: get_acquisition_info
+  description: Get acquisition information (tooth number, orientation, exposure settings).
+  source_operation: openapi/dentsply-sirona-intraoral-modality-openapi.yml#getAcquisitionInfo
+- name: set_acquisition_info
+  description: Update acquisition information for a session.
+  source_operation: openapi/dentsply-sirona-intraoral-modality-openapi.yml#setAcquisitionInfo
+- name: get_images
+  description: List the images captured in an acquisition session.
+  source_operation: openapi/dentsply-sirona-intraoral-modality-openapi.yml#getImages
+- name: get_image
+  description: Get one image's metadata from an acquisition session.
+  source_operation: openapi/dentsply-sirona-intraoral-modality-openapi.yml#getImage
+- name: get_image_media
+  description: Download the full-resolution media for an acquired image.
+  source_operation: openapi/dentsply-sirona-intraoral-modality-openapi.yml#getImageMedia
+- name: get_image_preview
+  description: Download the preview media for an acquired image.
+  source_operation: openapi/dentsply-sirona-intraoral-modality-openapi.yml#getImagePreview
+- name: create_filter_image
+  description: Upload a 16-bit grayscale PNG as a filter image resource.
+  source_operation: openapi/dentsply-sirona-intraoral-filters-openapi.yml#createImage
+- name: create_modality_image_resource
+  description: Create a filter image resource from an existing modality acquisition.
+  source_operation: openapi/dentsply-sirona-intraoral-filters-openapi.yml#modalityImage
+- name: get_filter_image
+  description: Get a filter image resource.
+  source_operation: openapi/dentsply-sirona-intraoral-filters-openapi.yml#getImage
+- name: delete_filter_image
+  description: Delete a filter image resource.
+  source_operation: openapi/dentsply-sirona-intraoral-filters-openapi.yml#deleteImage
+- name: get_filter_image_media
+  description: Download the media for a filter image resource.
+  source_operation: openapi/dentsply-sirona-intraoral-filters-openapi.yml#getImageMedia
+- name: unmap_image
+  description: Return the unmapped (raw) rendering of an image resource.
+  source_operation: openapi/dentsply-sirona-intraoral-filters-openapi.yml#unmapImage
+- name: apply_select_filter
+  description: Apply the Select filter to an image resource.
+  source_operation: openapi/dentsply-sirona-intraoral-filters-openapi.yml#filterSelect
+- name: apply_supreme_filter
+  description: Apply the Supreme filter to an image resource.
+  source_operation: openapi/dentsply-sirona-intraoral-filters-openapi.yml#filterSupreme
+- name: apply_ae_filter
+  description: Apply the AE filter to an image resource.
+  source_operation: openapi/dentsply-sirona-intraoral-filters-openapi.yml#filterAE
+- name: get_all_generators
+  description: List the intraoral X-ray tube generators a service manages.
+  source_operation: openapi/dentsply-sirona-intraoral-exposure-openapi.yml#getAllGenerators
+- name: get_generator
+  description: Get one intraoral X-ray tube generator.
+  source_operation: openapi/dentsply-sirona-intraoral-exposure-openapi.yml#getGenerator
+- name: get_exposures
+  description: List exposure dose records for a generator.
+  source_operation: openapi/dentsply-sirona-intraoral-exposure-openapi.yml#getExposures
+- name: get_exposure
+  description: Get one exposure dose record.
+  source_operation: openapi/dentsply-sirona-intraoral-exposure-openapi.yml#getExposure
+coverage:
+  rest_operations: 30
+  tools_derived: 30
+  tools_published_by_provider: 0
+caution: >-
+  These are clinical imaging operations on medical-device hardware. createAcquisitionSession and
+  setAcquisitionInfo drive an X-ray sensor; see agentic-access/dentsply-sirona-agentic-access.yml
+  before exposing any of them to an autonomous agent.

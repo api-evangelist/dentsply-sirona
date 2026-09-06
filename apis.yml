@@ -1,11 +1,18 @@
 aid: dentsply-sirona
 name: Dentsply Sirona
 description: >-
-  Dentsply Sirona is the world's largest manufacturer of professional dental
-  products and technologies, providing comprehensive solutions for dentists,
-  dental laboratories, and dental specialists worldwide. The company exposes
-  developer integrations through DS Core, an open cloud platform, and through
-  the Dentsply Sirona Imaging modality API for intraoral imaging hardware.
+  Dentsply Sirona is the world's largest manufacturer of professional dental products and
+  technologies, providing solutions for dentists, dental laboratories, and dental specialists
+  worldwide. Its public API surface has two halves that behave nothing alike. DS Core is the
+  company's open cloud platform, whose API lets practice-management vendors, lab-management
+  vendors and DSOs integrate patient data synchronization, scan and imaging exchange, lab order
+  routing, file and comment exchange, and SSO user provisioning — but its reference sits behind a
+  partner login and no machine-readable contract for it is public. The Dentsply Sirona Imaging
+  team, by contrast, publishes three real OpenAPI 3.0 contracts openly on GitHub under MIT and
+  Apache licences — the Intraoral Imaging Modality API, the Intraoral Imaging Filters API, and the
+  Intraoral Exposure API — covering 30 operations for driving intraoral sensors, filtering acquired
+  images, and reading X-ray tube generator dose records. Notably, none of the three references
+  DICOM.
 type: Index
 deliveryModel:
   model: saas
@@ -19,17 +26,17 @@ deliveryModel:
   generated: '2026-08-28'
   method: derived
 accessModel:
-  pricing: unknown
-  onboarding: unknown
-  trial: false
+  pricing: published
+  onboarding: application
+  trial: true
   try_now: false
   public: false
-  label: Unknown
-  confidence: low
+  label: Published platform pricing · API access by partner application
+  confidence: medium
   source:
   - plans
-  generated: '2026-07-22'
-  method: derived
+  generated: '2026-09-06'
+  method: searched
 image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/dentsply-sirona.png
 tags:
   - CAD/CAM
@@ -39,12 +46,13 @@ tags:
   - Imaging
   - Intraoral Imaging
   - Lab Management
+  - Medical Devices
   - Practice Management
   - Fortune 1000
 url: >-
   https://raw.githubusercontent.com/api-evangelist/dentsply-sirona/refs/heads/main/apis.yml
 created: '2026-03-24'
-modified: '2026-04-28'
+modified: '2026-09-06'
 specificationVersion: '0.23'
 kind: company
 position: Producing
@@ -58,7 +66,9 @@ apis:
       DS Core API enables Practice Management System (PMS) providers, Lab Management
       System (LMS) providers, and DSO enterprise solutions to integrate with DS Core
       for patient data synchronization, scan and imaging exchange, lab order routing,
-      file and comment exchange, and Single Sign-On user provisioning.
+      file and comment exchange, and Single Sign-On user provisioning. The API reference is
+      published behind a partner account at open.dscore.com — probed 2026-09-06, every path on
+      that host returns the same login shell — so no machine-readable contract is public.
     image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
     humanURL: https://open.dscore.com/
     baseURL: https://api.dscore.com
@@ -70,54 +80,202 @@ apis:
       - Practice Management
       - SSO
     properties:
+      - type: DeveloperPortal
+        url: https://open.dscore.com/
       - type: Documentation
         url: https://open.dscore.com/
-      - type: Signup
-        url: https://open.dscore.com/
+      - type: SignUp
+        url: https://open.dscore.com/auth/password/register
+      - type: Login
+        url: https://open.dscore.com/auth/password/login
+      - type: StatusPage
+        url: https://status.dscore.com/
       - type: Marketing
         url: https://www.dentsplysirona.com/en/lp/connected-dentistry.html
     contact:
       - FN: DS Core Open Platform
         url: https://open.dscore.com/
+      - FN: DS Core API Feedback
+        email: DS-Core-API@dentsplysirona.com
   - aid: dentsply-sirona:dsio-modality-api
     name: Dentsply Sirona Intraoral Imaging Modality API
     description: >-
-      The DSIO modality API enables third-party imaging software to drive
-      Dentsply Sirona intraoral imaging hardware (sensors and cameras) through
-      a documented protocol. The API and its reference client are published on
-      GitHub by the Dentsply Sirona Imaging team and are intended for software
-      vendors that wish to capture, transfer, and store intraoral images from
-      Dentsply Sirona devices in their own dental software.
+      A 17-operation OpenAPI 3.0.1 contract for acquisition and control of Dentsply Sirona
+      intraoral sensors. Devices operations retrieve names, icons, battery and status for connected
+      USB and WiFi sensor interfaces; Acquisition operations open a capture session, arm the sensor
+      with per-exposure AcquisitionInfo, and retrieve the resulting image media and previews. Two
+      Server-Sent Events channels push device events and acquisition-status transitions. This is a
+      LOCAL service: it runs as the Sensor Plugin service on the practice workstation, so its
+      declared server is https://localhost:43809/api/dsio/modality/v1 rather than a cloud host.
+      Authentication is HTTP Basic with an API key Dentsply Sirona issues directly to approved
+      developers.
     image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
     humanURL: https://github.com/dsimaging/dsio-modality-api
-    baseURL: https://api.example.com
+    baseURL: https://localhost:43809/api/dsio/modality/v1
     tags:
       - GitHub
       - Imaging
       - Intraoral
       - Modality
       - Sensors
+      - OpenAPI
     properties:
+      - type: OpenAPI
+        url: openapi/dentsply-sirona-intraoral-modality-openapi.yml
+      - type: Overlay
+        url: overlays/dentsply-sirona-modality-overlay.yaml
       - type: Documentation
-        url: https://github.com/dsimaging/dsio-modality-api
+        url: https://github.com/dsimaging/dsio-modality-api/wiki
+      - type: APIReference
+        url: https://github.com/dsimaging/dsio-modality-api/wiki/Overview
+      - type: Authentication
+        url: https://github.com/dsimaging/dsio-modality-api/wiki/Authentication
+      - type: GettingStarted
+        url: https://github.com/dsimaging/dsio-modality-api/wiki/Guides
+      - type: Postman
+        url: >-
+          https://github.com/dsimaging/dsio-modality-api/blob/master/api/Dentsply%20Sirona%20Intraoral%20Modality%20API.postman_collection.json
+      - type: ChangeLog
+        url: https://github.com/dsimaging/dsio-modality-api/releases
       - type: Source Code
         url: https://github.com/dsimaging/dsio-modality-api
     contact:
       - FN: Dentsply Sirona Imaging
         url: https://github.com/dsimaging
+  - aid: dentsply-sirona:dsio-filters-api
+    name: Dentsply Sirona Intraoral Imaging Filters API
+    description: >-
+      A 9-operation OpenAPI 3.0.1 contract for applying Dentsply Sirona's Select, Supreme and AE
+      image filters to 16-bit grayscale intraoral images. An image resource is created either by
+      uploading a PNG or by referencing a capture in a live Modality API acquisition session, then
+      filters are applied and the filtered PNG returned; the resource is transient and carries an
+      `expires` timestamp after which it is deleted. Like the Modality API it is a LOCAL service on
+      the practice workstation, and it declares no security scheme because it is reached over
+      loopback.
+    image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+    humanURL: https://github.com/dsimaging/dsio-filters-api
+    baseURL: https://localhost:43809/api/dsio/filters/v1
+    tags:
+      - GitHub
+      - Imaging
+      - Intraoral
+      - Image Processing
+      - Filters
+      - OpenAPI
+    properties:
+      - type: OpenAPI
+        url: openapi/dentsply-sirona-intraoral-filters-openapi.yml
+      - type: Overlay
+        url: overlays/dentsply-sirona-filters-overlay.yaml
+      - type: Documentation
+        url: https://github.com/dsimaging/dsio-filters-api
+      - type: Postman
+        url: >-
+          https://github.com/dsimaging/dsio-filters-api/blob/master/api/Dentsply%20Sirona%20Intraoral%20Filters%20API.postman_collection.json
+      - type: ChangeLog
+        url: https://github.com/dsimaging/dsio-filters-api/releases
+      - type: Source Code
+        url: https://github.com/dsimaging/dsio-filters-api
+    contact:
+      - FN: Dentsply Sirona Imaging
+        url: https://github.com/dsimaging
+  - aid: dentsply-sirona:io-exposure-api
+    name: Intraoral Exposure API
+    description: >-
+      A 4-operation, read-only OpenAPI 3.0.0 contract for exchanging intraoral X-ray exposure dose
+      information, so exposure data can be stored alongside a patient's media and dental record.
+      It is a SPECIFICATION Dentsply Sirona published for X-ray tube generator vendors to
+      implement, not a service Dentsply Sirona hosts — the only server the document declares is a
+      SwaggerHub auto-mock, and the companion Recommendations document tells implementers to choose
+      their own versioned endpoint and announce it over mDNS as `_io-exposure._tcp`. The repository
+      is archived. Licensed Apache 2.0; contact John.Goyette@dentsplysirona.com.
+    image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+    humanURL: https://github.com/dsimaging/io-exposure-service
+    baseURL: https://virtserver.swaggerhub.com/JohnGoyette/intraoral-exposure-service/1.0
+    tags:
+      - GitHub
+      - Imaging
+      - Intraoral
+      - Radiation Dose
+      - X-Ray
+      - OpenAPI
+    properties:
+      - type: OpenAPI
+        url: openapi/dentsply-sirona-intraoral-exposure-openapi.yml
+      - type: Overlay
+        url: overlays/dentsply-sirona-exposure-overlay.yaml
+      - type: Documentation
+        url: https://github.com/dsimaging/io-exposure-service/blob/main/docs/Recommendations.md
+      - type: Sandbox
+        url: https://github.com/dsimaging/io-exposure-service/tree/main/sample
+      - type: Source Code
+        url: https://github.com/dsimaging/io-exposure-service
+    contact:
+      - FN: Dentsply Sirona Imaging
+        url: https://github.com/dsimaging
 common:
+  - type: AgenticAccess
+    url: agentic-access/dentsply-sirona-agentic-access.yml
+  - type: AgentSkill
+    url: skills/_index.yml
+  - type: Authentication
+    url: authentication/dentsply-sirona-authentication.yml
+  - type: ChangeLog
+    url: changelog/dentsply-sirona-changelog.yml
+  - type: Conformance
+    url: conformance/dentsply-sirona-conformance.yml
+  - type: Conventions
+    url: conventions/dentsply-sirona-conventions.yml
+  - type: DataModel
+    url: data-model/dentsply-sirona-data-model.yml
   - type: DomainSecurity
     url: security/dentsply-sirona-domain-security.yml
+  - type: ErrorCatalog
+    url: errors/dentsply-sirona-problem-types.yml
+  - type: Lifecycle
+    url: lifecycle/dentsply-sirona-lifecycle.yml
+  - type: LLMsTxt
+    url: llms/dentsply-sirona-llms.txt
+  - type: X-MCPServerCandidate
+    url: mcp/dentsply-sirona-mcp.yml
+  - type: Packages
+    url: packages/dentsply-sirona-packages.yml
+  - type: SDKs
+    url: packages/dentsply-sirona-packages.yml
+  - type: Sandbox
+    url: sandbox/dentsply-sirona-sandbox.yml
+  - type: SecurityTxt
+    url: well-known/dentsply-sirona-security.txt
+  - type: Security
+    url: https://www.dentsplysirona.com/.well-known/security.txt
+  - type: VulnerabilityDisclosure
+    url: security/dentsply-sirona-vulnerability-disclosure.yml
+  - type: WellKnown
+    url: well-known/dentsply-sirona-well-known.yml
+  - type: StatusPage
+    url: https://status.dscore.com/
+  - type: DeveloperPortal
+    url: https://open.dscore.com/
+  - type: Documentation
+    url: https://open.dscore.com/
+  - type: SignUp
+    url: https://open.dscore.com/auth/password/register
+  - type: GitHubOrganization
+    url: https://github.com/dsimaging
+  - type: Pricing
+    url: https://www.dentsplysirona.com/en-us/explore/digital-dentistry/brands/ds-core.html
+  - type: Support
+    url: https://www.dentsplysirona.com/en-us/support
   - type: LinkedIn
     url: https://www.linkedin.com/company/dentsplysirona
   - type: Website
-    url: https://www.dentsply-sirona.com
+    url: https://www.dentsplysirona.com
   - type: USA Website
     url: https://www.dentsplysirona.com/en-us
   - type: Open Platform
     url: https://open.dscore.com/
   - type: DS Core Marketing
-    url: https://www.dentsplysirona.com/en-us/discover/discover-by-brand/ds-core.html
+    url: https://www.dentsplysirona.com/en-us/explore/digital-dentistry/brands/ds-core.html
   - type: Connected Dentistry
     url: https://www.dentsplysirona.com/en/lp/connected-dentistry.html
   - type: Connect Software
@@ -129,21 +287,26 @@ common:
   - type: Investors
     url: https://investor.dentsplysirona.com
   - type: Newsroom
-    url: https://www.dentsplysirona.com/en/about-dentsply-sirona/news.html
+    url: https://www.dentsplysirona.com/en-us/why-ds/about-ds/newsroom.html
   - type: Sustainability
-    url: https://www.dentsplysirona.com/en/about-dentsply-sirona/sustainability.html
+    url: https://www.dentsplysirona.com/en-us/why-ds/our-company/sustainability.html
   - type: Careers
-    url: https://www.dentsplysirona.com/en/about-dentsply-sirona/careers.html
+    url: https://careers.dentsplysirona.com/
   - type: Contact
-    url: https://www.dentsplysirona.com/en/about-dentsply-sirona/contact-us.html
+    url: https://www.dentsplysirona.com/en-us/support/contact-support.html
   - type: TermsOfService
-    url: https://www.dentsplysirona.com/en/legal-notice.html
+    url: https://www.dentsplysirona.com/en-us/legal/terms-of-use.html
   - type: PrivacyPolicy
-    url: https://www.dentsplysirona.com/en/legal-notice/privacy-policy.html
+    url: https://www.dentsplysirona.com/en-us/legal/privacy-policy.html
   - type: JSONLD
     url: json-ld/dentsply-sirona-context.jsonld
   - type: Vocabulary
     url: vocabulary/dentsply-sirona-vocabulary.yml
+x-enrichment:
+  date: '2026-09-06'
+  status: enriched
+  artifacts_added: 22
+  pass: local-v3
 maintainers:
   - FN: Kin Lane
     email: kin@apievangelist.com

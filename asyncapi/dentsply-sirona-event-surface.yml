@@ -1,0 +1,52 @@
+generated: '2026-09-06'
+method: derived
+source: openapi/dentsply-sirona-intraoral-modality-openapi.yml
+spec_type: none
+notes: >-
+  Dentsply Sirona publishes NO AsyncAPI document and NO webhooks. It does ship a real event
+  surface: two Server-Sent Events channels declared inside the Intraoral Modality OpenAPI, which
+  push device and acquisition-status events to a subscribed client over a held-open HTTP
+  connection. This file records that surface as observed; it is deliberately NOT an AsyncAPI
+  document, because the provider never wrote one and generating one here would credit them with a
+  specification they do not publish. No AsyncAPI or Webhooks pointer is wired to it.
+event_style: server-sent-events
+transport: HTTP (text/event-stream), client-initiated subscription
+webhooks:
+  published: false
+  note: >-
+    There is no callback registration, no delivery retry contract, and no signing scheme — the
+    client holds the connection open and the service pushes. A consumer that is not running cannot
+    receive anything.
+channels:
+- name: device-events
+  operation: subscribeDevices
+  path: /devices/subscribe
+  media_type: text/event-stream
+  payload_schema: DeviceEventData
+  description: >-
+    Device events for the intraoral devices the local Sensor Plugin service manages — connect,
+    disconnect and status transitions. A Heartbeat schema is also declared for keeping the stream
+    alive.
+- name: acquisition-status
+  operation: subscribeAcquisitionStatus
+  path: /acquisition/{sessionId}/status/subscribe
+  media_type: text/event-stream
+  payload_schema: AcquisitionStatus
+  description: >-
+    Status transitions for one open acquisition session — the stream a client watches to know when
+    a sensor has been exposed and an image is ready.
+sdk_support:
+  language: csharp
+  interface: ISubscription
+  evidence: >-
+    https://github.com/dsimaging/dsio-modality-api/blob/master/sdk/dotnet/README.md — "The API
+    methods that are used to subscribe to events are different than standard REST calls. These
+    methods maintain an open connection to the service and push data through this connection as
+    needed. The SDK provides an ISubscription interface to handle subscriptions."
+  classes:
+  - DeviceEventSubscription
+  - AcquisitionStatusSubscription
+gaps:
+- No AsyncAPI document for either channel.
+- No published event catalogue outside the OpenAPI operation descriptions.
+- No reconnection, replay or last-event-id semantics documented.

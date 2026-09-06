@@ -1,0 +1,9 @@
+# security.txt for https://www.dentsplysirona.com/en-us
+
+Contact: tel:+1704-587-0453
+Encryption: https://www.dentsplysirona.com/pgp-key.txt
+Preferred-Languages: en
+Canonical: https://www.dentsplysirona.com/.well-known/security.txt
+Policy: https://www.dentsplysirona.com/privacy-policy
+
+# You can add more information or customize further as needed

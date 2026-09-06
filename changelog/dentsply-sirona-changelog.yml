@@ -1,0 +1,65 @@
+generated: '2026-09-06'
+method: searched
+source: >-
+  https://github.com/dsimaging/dsio-modality-api/releases,
+  https://github.com/dsimaging/dsio-filters-api/releases
+notes: >-
+  Dentsply Sirona publishes no API changelog on any web property. The DS Core developer portal is
+  behind a partner login and no public release notes exist for the DS Core API. The only dated,
+  public change record for any Dentsply Sirona API is the GitHub release history of the two
+  intraoral imaging repositories, captured below. Both stopped at v1.0 in August 2022.
+scheme: semver-ish tags (v1.0, v1.0-beta-N)
+current_version: v1.0
+surfaces:
+- api: DS Core API
+  changelog: null
+  note: none published; portal is gated
+- api: Dentsply Sirona Intraoral Imaging Modality API
+  changelog: https://github.com/dsimaging/dsio-modality-api/releases
+- api: Dentsply Sirona Intraoral Imaging Filters API
+  changelog: https://github.com/dsimaging/dsio-filters-api/releases
+entries:
+- version: v1.0
+  api: Intraoral Imaging Filters API
+  date: '2022-08-04'
+  breaking: false
+  highlights:
+  - First general-availability release; dotnet-sdk-nugets.zip attached.
+- version: v1.0
+  api: Intraoral Imaging Modality API
+  date: '2022-08-04'
+  breaking: false
+  highlights:
+  - First general-availability release; dotnet-sdk-nugets.zip attached.
+- version: v1.0-beta-3
+  api: Intraoral Imaging Filters API
+  date: '2022-01-07'
+  breaking: null
+  highlights:
+  - Beta 3; dotnet-sdk-nugets.zip attached.
+- version: v1.0-beta-4
+  api: Intraoral Imaging Modality API
+  date: '2022-01-06'
+  breaking: null
+  highlights:
+  - Beta 4; dotnet-sdk-nugets.zip attached.
+- version: v1.0-beta-2
+  api: Intraoral Imaging Modality API
+  date: '2021-12-02'
+  breaking: null
+- version: v1.0-beta-2
+  api: Intraoral Imaging Filters API
+  date: '2021-12-02'
+  breaking: null
+- version: v1.0-beta
+  api: Intraoral Imaging Filters API
+  date: '2021-08-24'
+  breaking: null
+  highlights:
+  - Initial beta release.
+- version: v1.0-beta
+  api: Intraoral Imaging Modality API
+  date: '2021-08-24'
+  breaking: null
+  highlights:
+  - Initial beta release.

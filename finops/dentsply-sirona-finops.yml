@@ -16,9 +16,12 @@ created: '2026-05-04'
 method: generated
 modified: '2026-05-05'
 reconciled: false
-notes: Dentsply Sirona does not publish API pricing. DS Core is sold as a per-practice subscription, with
+notes: 'Source list corrected 2026-09-06: this file previously cited https://developer.dscore.com/,
+  a host that does not resolve. Dentsply Sirona does not publish API pricing, but it DOES publish
+  four DS Core platform tiers (Access free, Light $19.95, Standard $99.95, Advanced $249.95 per
+  month) — see plans/dentsply-sirona-plans-pricing.yml. DS Core is sold as a per-practice subscription, with
   imaging-modality APIs included with hardware purchase. FinOps shape is SaaS subscription plus hardware
-  CapEx; API consumption is not directly billed. Reconcile against DS Core subscription invoices when available.
+  CapEx; API consumption is not directly billed. Reconcile against DS Core subscription invoices when available.'
 tags:
   - Dental
   - DS Core
@@ -29,8 +32,8 @@ tags:
 description: 'FOCUS-aligned FinOps for Dentsply Sirona DS Core and intraoral imaging APIs: SaaS subscription
   for the DS Core cloud platform plus modality-bundled API access on hardware. No per-call API charges.'
 sources:
-  - https://www.dentsplysirona.com/
-  - https://developer.dscore.com/
+  - https://www.dentsplysirona.com/en-us/explore/digital-dentistry/brands/ds-core.html
+  - https://open.dscore.com/
 principles:
   - name: Visibility
     description: Track DS Core seat and practice counts via the practice admin console; reconcile imaging

@@ -4,82 +4,135 @@ schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main
 provider: Dentsply Sirona
 providerId: dentsply-sirona
 created: '2026-05-04'
-# Provenance stamped 2026-08-11: this artifact was written by the API Evangelist
-# bulk sweep dated 2026-05-04, not harvested from the provider. See roadmap#35.
-method: generated
-modified: '2026-05-05'
-reconciled: false
-notes: Dentsply Sirona does not publish self-serve API pricing. DS Core (cloud platform) and Intraoral
-  Imaging Modality APIs are accessed by accredited practice / lab software partners and existing DS Core
-  customers; commercial terms are agreed via dental partner agreements. No public per-call API price exists.
+modified: '2026-09-06'
+generated: '2026-09-06'
+method: searched
+source: https://www.dentsplysirona.com/en-us/explore/digital-dentistry/brands/ds-core.html
+reconciled: true
+plan_count: 4
+notes: >-
+  Rewritten 2026-09-06. The previous version of this file was a 2026-05-04 bulk-sweep scaffold that
+  asserted "Dentsply Sirona does not publish self-serve API pricing" and cited
+  https://developer.dscore.com/, a host that does not resolve. That was wrong: Dentsply Sirona
+  publishes four named DS Core tiers with list prices, on its own site, in USD. The tiers below are
+  quoted verbatim from that page. IMPORTANT DISTINCTION: this is PLATFORM pricing, not API pricing.
+  Nothing published prices API access, per-call usage, or partner integration; API access rides on
+  a DS Core subscription and on the DS Core partner agreement, whose terms are bilateral.
+description: >-
+  DS Core is sold as a four-tier monthly subscription banded by practice size and expected upload
+  volume, plus a free Access tier for practices that only send orders to labs. Subscriptions carry
+  unlimited users; the tier is chosen against an estimated monthly count of digital-impression scan
+  and X-ray uploads. There is no published API-specific plan, no per-call price, and no published
+  quota expressed in API terms.
 tags:
   - CAD/CAM
-  - CEREC
   - Dental
   - DS Core
   - Imaging
-  - Intraoral Imaging
-  - Lab Management
   - Practice Management
-description: Dentsply Sirona DS Core APIs are gated to integration partners and DS Core subscribers rather
-  than self-serve. API access is bundled with the DS Core cloud subscription (per-practice / per-seat
-  pricing not published) or with the corresponding hardware modality (CEREC, Primescan, Schick). Custom
-  pricing terms are described in the partner agreement; this artifact retains a single bundled plan stub
-  pending direct partner reconciliation.
+  - Subscription
 sources:
-  - https://www.dentsplysirona.com/
-  - https://developer.dscore.com/
+  - url: https://www.dentsplysirona.com/en-us/explore/digital-dentistry/brands/ds-core.html
+    checked: '2026-09-06'
+    status: 200
+  - url: https://open.dscore.com/
+    checked: '2026-09-06'
+    status: 200
+    finding: partner registration only; no pricing
+  - url: https://developer.dscore.com/
+    checked: '2026-09-06'
+    status: 000
+    finding: does not resolve — cited by the previous scaffold of this file
 plans:
-  - id: dentsply-sirona-ds-core-bundled
-    name: DS Core / Modality-Bundled Access
-    type: enterprise
-    description: API access is bundled with a DS Core subscription or with the underlying intraoral imaging
-      modality. Pricing is bilateral and not published publicly.
-    entries:
-      - label: DS Core Subscription
-        description: Practice / lab subscription to DS Core cloud platform; pricing custom.
-        name: ds_core_subscription
-        type: subscription
-        metric: month
-        limit: 1
-        timeFrame: month
-        geo: configurable
-        domains:
-          - https://api.dscore.com
-        unit: 1
-        price: contact sales
-        userMultiplied: false
-      - label: Modality / Hardware Bundle
-        description: Intraoral Imaging Modality API bundled with the corresponding Schick / Primescan
-          / CEREC modality.
-        name: modality_bundle
-        type: flat
-        metric: device
-        limit: -1
-        timeFrame: month
-        geo: configurable
-        domains:
-          - https://api.dscore.com
-        unit: 1
-        price: included with hardware
-        userMultiplied: false
-      - label: Partner API Access
-        description: ISV / partner API access under the DS Core developer agreement.
-        name: partner_api_access
-        type: flat
-        metric: varies
-        limit: -1
-        timeFrame: month
-        geo: configurable
-        domains:
-          - https://api.dscore.com
-        unit: 1
-        price: contact sales
-        userMultiplied: false
+  - id: ds-core-access
+    name: DS Core Access
+    type: free
+    price: 0
+    currency: USD
+    period: month
+    description: >-
+      "For practices that only want to send orders to labs." Described on the page as the Connect
+      Case Center replacement.
+    limits:
+      - Order sending to labs only
     elements:
-      - name: DS Core API
-      - name: Dentsply Sirona Intraoral Imaging Modality API
-      - name: Partner agreement terms
+      - name: DS Core platform
+  - id: ds-core-light
+    name: DS Core Light
+    type: subscription
+    price: 19.95
+    currency: USD
+    period: month
+    description: >-
+      "For small dental practices (with 1-2 dentists) with an estimated usage of up to 90 DI scan
+      and X-ray uploads / acquisitions per month."
+    included_quota:
+      metric: DI scan and X-ray uploads / acquisitions
+      amount: 90
+      period: month
+      note: >-
+        Stated as an estimated usage recommendation, not an enforced cap. The footnote reads
+        "DS Core subscriptions support an unlimited number of users, however usage must align with
+        the outlined recommendations from the order forms of DS Core per tier."
+    trial:
+      length: 3 months
+      terms: >-
+        "You can try all the features of DS Core Light for 3 months prior to subscribing. You can
+        terminate your DS Core Light subscription at any time during the first 3 months prior to
+        your first payment being due."
+    elements:
+      - name: DS Core platform
+  - id: ds-core-standard
+    name: DS Core Standard
+    type: subscription
+    price: 99.95
+    currency: USD
+    period: month
+    description: >-
+      "For medium dental practices (with 3-5 dentists) with an estimated usage of up to 270 DI scan
+      and X-ray uploads / acquisitions per month."
+    included_quota:
+      metric: DI scan and X-ray uploads / acquisitions
+      amount: 270
+      period: month
+    elements:
+      - name: DS Core platform
+  - id: ds-core-advanced
+    name: DS Core Advanced
+    type: subscription
+    price: 249.95
+    currency: USD
+    period: month
+    description: >-
+      "For large dental practices (with 5-10 dentists) with an estimated usage of up to 540 DI scan
+      and X-ray uploads / acquisitions per month."
+    included_quota:
+      metric: DI scan and X-ray uploads / acquisitions
+      amount: 540
+      period: month
+    elements:
+      - name: DS Core platform
+unpriced_surfaces:
+  - api: DS Core API
+    note: >-
+      No published price for API access, partner integration, or per-call usage. Access is granted
+      through the DS Core partner programme after an eligibility review at open.dscore.com.
+  - api: Dentsply Sirona Intraoral Imaging Modality API
+    note: >-
+      No price. The API is free to use; the API key is issued by Dentsply Sirona to approved
+      developers, and the SDK is MIT-licensed. The commercial gate is the sensor hardware.
+  - api: Dentsply Sirona Intraoral Imaging Filters API
+    note: No price; MIT-licensed SDK, local service.
+  - api: Intraoral Exposure API
+    note: >-
+      No price. Apache-2.0 specification for generator vendors to implement; Dentsply Sirona hosts
+      nothing.
+overage: null
+enterprise:
+  contact_sales: true
+  note: >-
+    DS Core Enterprise for DSOs (with SSO user provisioning) is sold through sales, not published
+    pricing.
 maintainers:
   - FN: Kin Lane
     email: kin@apievangelist.com

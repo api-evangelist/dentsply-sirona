@@ -1,0 +1,76 @@
+generated: '2026-09-06'
+method: searched
+source: >-
+  https://github.com/dsimaging/dsio-modality-api/releases,
+  https://github.com/dsimaging/dsio-filters-api/releases; registry checks against
+  azuresearch-usnc.nuget.org (NuGet) and registry.npmjs.org
+notes: >-
+  Dentsply Sirona Imaging ships first-party .NET SDKs for the two intraoral imaging APIs, but does
+  NOT publish them to a package registry. NuGet was queried for both "DSIO" and "Dentsply" and
+  returned 0 hits; npm has nothing first-party. The SDKs are distributed only as a
+  `dotnet-sdk-nugets.zip` asset attached to a GitHub release, or built from source in the repo.
+  Both packages last shipped a release on 2022-08-04 (v1.0), while the repositories themselves were
+  last touched 2026-06-11 — the SDK is four years behind the repo it lives in.
+registry_checks:
+- registry: nuget
+  query: DSIO
+  total_hits: 0
+- registry: nuget
+  query: Dentsply
+  total_hits: 0
+- registry: npm
+  query: dentsply dscore
+  first_party_hits: 0
+packages:
+- language: csharp
+  registry: github-release
+  name: DSIO.Modality.Api.Sdk
+  url: https://github.com/dsimaging/dsio-modality-api/releases/tag/v1.0
+  install: >-
+    Download dotnet-sdk-nugets.zip from the release page, or build from source with
+    sdk/dotnet/build.ps1
+  official: true
+  version: v1.0
+  published: '2022-08-04'
+  components:
+  - DSIO.Modality.Api.Sdk.Client
+  - DSIO.Modality.Api.Sdk.Types
+  covers: openapi/dentsply-sirona-intraoral-modality-openapi.yml
+  license: MIT
+  note: >-
+    Not on NuGet. Distribution is a zip asset on a GitHub release, so there is no registry metadata
+    endpoint and no version-resolution path for a consumer's package manager.
+- language: csharp
+  registry: github-release
+  name: DSIO.Filters.Api.Sdk
+  url: https://github.com/dsimaging/dsio-filters-api/releases/tag/v1.0
+  install: >-
+    Download dotnet-sdk-nugets.zip from the release page, or build from source with
+    sdk/dotnet/build.ps1
+  official: true
+  version: v1.0
+  published: '2022-08-04'
+  components:
+  - DSIO.Filters.Api.Sdk.Client
+  - DSIO.Filters.Api.Sdk.Types
+  covers: openapi/dentsply-sirona-intraoral-filters-openapi.yml
+  license: MIT
+  note: Not on NuGet; zip asset on a GitHub release, same distribution gap as the Modality SDK.
+- language: javascript
+  registry: null
+  name: intraoral-exposure-service mock
+  url: https://github.com/dsimaging/io-exposure-service/tree/main/sample
+  install: npm install (from the repository's sample/ folder)
+  official: true
+  version: null
+  published: null
+  covers: openapi/dentsply-sirona-intraoral-exposure-openapi.yml
+  note: >-
+    A NodeJS mock implementation of the Intraoral Exposure API, published in the repository for
+    developers to test against. It is a sample service, not a client SDK, and is not published to
+    npm — no registry metadata exists to read a version from. The repository is archived.
+no_sdk_for:
+- api: DS Core API
+  reason: >-
+    No public SDK. The DS Core developer portal (open.dscore.com) is behind a partner login, so any
+    client library it may ship is not publicly observable.

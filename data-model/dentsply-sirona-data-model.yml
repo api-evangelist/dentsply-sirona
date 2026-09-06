@@ -1,0 +1,163 @@
+generated: '2026-09-06'
+method: derived
+source: >-
+  openapi/dentsply-sirona-intraoral-modality-openapi.yml,
+  openapi/dentsply-sirona-intraoral-filters-openapi.yml,
+  openapi/dentsply-sirona-intraoral-exposure-openapi.yml
+notes: >-
+  Entity graph derived from components.schemas and the $ref links between them across the three
+  first-party intraoral imaging contracts. Ids are opaque strings (the Filters API examples use
+  UUIDs); no id prefixes or type-tagged identifiers are used anywhere.
+entities:
+- name: DeviceInfo
+  api: modality
+  description: An intraoral device (USB or WiFi sensor interface) the local service manages.
+  key: id
+  fields_of_note:
+  - id
+  - name
+  - status (DeviceStatus)
+  - battery (BatteryInfo)
+- name: SensorInfo
+  api: modality
+  description: The sensor attached to a device — size, pixel geometry, calibration.
+- name: BatteryInfo
+  api: modality
+  description: Battery state of a wireless device.
+- name: DeviceStatus
+  api: modality
+  description: Enumerated device state.
+- name: DeviceEventData
+  api: modality
+  description: Payload pushed on the /devices/subscribe SSE channel.
+- name: Heartbeat
+  api: modality
+  description: Keep-alive payload on the SSE channels.
+- name: AcquisitionSession
+  api: modality
+  description: An open capture session binding one device to a client.
+  key: sessionId
+- name: AcquisitionSessionInfo
+  api: modality
+  description: The request body used to create or update a session.
+- name: AcquisitionStatus
+  api: modality
+  description: Status transitions for a session; also the SSE payload on /status/subscribe.
+- name: AcquisitionInfo
+  api: modality
+  description: Per-capture information — tooth, orientation, rotation.
+- name: ExposureInfo
+  api: modality
+  description: X-ray exposure settings recorded with an acquired image.
+- name: ImageInfo
+  api: modality+filters
+  description: >-
+    Image metadata — dimensions, bit depth, binning. Declared independently in BOTH the modality
+    and filters contracts rather than shared, so the two definitions can drift.
+- name: LutInfo
+  api: modality
+  description: Look-up-table (slope/offset) used to map raw sensor values for display.
+- name: HashInfo
+  api: modality
+  description: Integrity hash for image media.
+- name: BinningMode
+  api: modality+filters
+  description: Sensor binning mode; duplicated across both contracts.
+- name: ImageResource
+  api: filters
+  description: A transient image resource uploaded for filtering; auto-expires.
+  key: id
+  fields_of_note:
+  - id
+  - media (URL)
+  - createdOn
+  - expires
+  - imageInfo
+  - modalitySession
+- name: ModalitySession
+  api: filters
+  description: >-
+    Back-reference from a filter image resource to the modality acquisition session it came from —
+    the only cross-API relationship in the whole surface.
+- name: SelectFilter
+  api: filters
+  description: Parameters for the Select filter.
+- name: SupremeFilter
+  api: filters
+  description: Parameters for the Supreme filter.
+- name: AEFilter
+  api: filters
+  description: Parameters for the AE filter.
+- name: Generator
+  api: exposure
+  description: An intraoral X-ray tube generator managed by an exposure service.
+  key: id
+- name: Exposure
+  api: exposure
+  description: One exposure dose record produced by a generator.
+  key: id
+relationships:
+- from: DeviceInfo
+  to: SensorInfo
+  type: has_one
+  via: /devices/{deviceId}/sensor
+- from: DeviceInfo
+  to: BatteryInfo
+  type: has_one
+  via: battery
+- from: DeviceInfo
+  to: DeviceStatus
+  type: has_one
+  via: status
+- from: AcquisitionSession
+  to: DeviceInfo
+  type: belongs_to
+  via: deviceId
+- from: AcquisitionSession
+  to: AcquisitionStatus
+  type: has_one
+  via: /acquisition/{sessionId}/status
+- from: AcquisitionSession
+  to: AcquisitionInfo
+  type: has_one
+  via: /acquisition/{sessionId}/info
+- from: AcquisitionSession
+  to: ImageInfo
+  type: has_many
+  via: /acquisition/{sessionId}/images
+- from: ImageInfo
+  to: ExposureInfo
+  type: has_one
+  via: exposure
+- from: ImageInfo
+  to: LutInfo
+  type: has_one
+  via: lut
+- from: ImageInfo
+  to: HashInfo
+  type: has_one
+  via: hash
+- from: ImageResource
+  to: ImageInfo
+  type: has_one
+  via: imageInfo
+- from: ImageResource
+  to: ModalitySession
+  type: has_one
+  via: modalitySession
+- from: ModalitySession
+  to: AcquisitionSession
+  type: belongs_to
+  via: sessionId (cross-API, Filters -> Modality)
+- from: Generator
+  to: Exposure
+  type: has_many
+  via: /generator/{id}/exposure
+observations:
+- >-
+    ImageInfo and BinningMode are defined twice — once in the Modality contract and once in the
+    Filters contract — with no shared component library, so the two can drift silently.
+- >-
+    ModalitySession is the only edge between the three APIs. The Exposure API shares no schema with
+    the other two, even though ExposureInfo (modality) and Exposure (exposure service) describe the
+    same physical event from two sides.

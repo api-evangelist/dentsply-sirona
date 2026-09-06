@@ -1,0 +1,66 @@
+generated: '2026-09-06'
+method: searched
+source: https://github.com/dsimaging/io-exposure-service/tree/main/sample
+notes: >-
+  There is no hosted sandbox, no test-vs-live key separation, and no magic test values for any
+  Dentsply Sirona API. What the provider does publish is a runnable NodeJS MOCK of the Intraoral
+  Exposure API — a local service with canned data a developer can code against before real X-ray
+  hardware exists. That is the whole test surface, and it covers only 4 of the 30 published
+  operations. The DS Core developer portal says a partner gets "a flexible environment" to
+  prototype in after registration is approved, but nothing about it is publicly observable.
+hosted_sandbox: false
+test_live_separation:
+  supported: false
+  note: >-
+    Keys are issued by Dentsply Sirona directly to approved developers; there is no test-mode key
+    prefix and no mode switch.
+local_mocks:
+- name: Intraoral Exposure Service mock
+  api: openapi/dentsply-sirona-intraoral-exposure-openapi.yml
+  url: https://github.com/dsimaging/io-exposure-service/tree/main/sample
+  runtime: NodeJS (express)
+  install: npm install, then run the sample from the repository's sample/ folder
+  files:
+  - sample/main.js
+  - sample/routes.js
+  - sample/mock-data.js
+  covers:
+  - getAllGenerators
+  - getGenerator
+  - getExposures
+  - getExposure
+  note: >-
+    Ships with mock-data.js so a client can exercise generator and exposure reads without a tube
+    generator. The repository is ARCHIVED, so the mock is frozen.
+- name: SwaggerHub auto-mock
+  api: openapi/dentsply-sirona-intraoral-exposure-openapi.yml
+  url: https://virtserver.swaggerhub.com/JohnGoyette/intraoral-exposure-service/1.0
+  note: >-
+    The Exposure API spec's only declared server is a SwaggerHub API Auto Mocking endpoint under an
+    individual engineer's SwaggerHub account, not a Dentsply Sirona-operated host. Recorded here
+    because it is what the published contract points at; it is a mock, not a sandbox the provider
+    supports.
+postman_collections:
+- api: Intraoral Imaging Modality API
+  file: api/Dentsply Sirona Intraoral Modality API.postman_collection.json
+  url: https://github.com/dsimaging/dsio-modality-api/blob/master/api/Dentsply%20Sirona%20Intraoral%20Modality%20API.postman_collection.json
+  note: >-
+    First-party Postman collection covering every operation in the spec — the provider's own
+    recommended way to exercise a running instance ("import this file into Postman and it will
+    create a set of commands for each API in the spec").
+- api: Intraoral Imaging Filters API
+  file: api/Dentsply Sirona Intraoral Filters API.postman_collection.json
+  url: https://github.com/dsimaging/dsio-filters-api/blob/master/api/Dentsply%20Sirona%20Intraoral%20Filters%20API.postman_collection.json
+local_docs_servers:
+- command: npm run swagger
+  note: >-
+    Both imaging repositories ship a swagger-ui + express docs server so a developer can drive a
+    running local service interactively from the browser.
+- command: npm run build-redoc
+  note: Builds static ReDoc HTML into docs/redoc/.
+test_values: []
+test_clocks: false
+gaps:
+- No sandbox or mock for the DS Core API — the largest surface has the least testability.
+- No mock or simulator for the Modality or Filters APIs; both require real sensor hardware.
+- No published test credentials of any kind.

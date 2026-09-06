@@ -1,0 +1,273 @@
+generated: '2026-09-06'
+method: searched
+source: live probes of every host this record knows, 2026-09-06
+notes: >-
+  Six hosts probed on the closed path list. One real document was found: an RFC 9116 security.txt
+  served by www.dentsplysirona.com (and by the apex, which redirects there). open.dscore.com is a
+  catch-all: it answers HTTP 200 with the same 29,291-byte developer-portal login shell for every
+  path, including a negative-control path that cannot exist, so none of its 200s is a document and
+  no pointer is emitted on its behalf. api.dscore.com, service.dscore.com and dscore.com return
+  honest 404s on every path.
+hosts:
+- host: https://www.dentsplysirona.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 200
+    file: dentsply-sirona-security.txt
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/apis.json
+    status: 404
+  - path: /apis.json
+    status: 404
+  - path: /apis.yml
+    status: 404
+  - path: /.well-known/aauth-resource.json
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+  - path: /llms.txt
+    status: 404
+  path_echo_control: passed
+  soft_404_control:
+    path: /.well-known/dentsply-sirona-negative-control-7f3ab91c.json
+    status: 404
+- host: https://dentsplysirona.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 200
+    file: dentsply-sirona-security.txt
+    note: same document as www; the apex redirects to www.dentsplysirona.com
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/apis.json
+    status: 404
+  - path: /apis.json
+    status: 404
+  - path: /apis.yml
+    status: 404
+  - path: /.well-known/aauth-resource.json
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+  - path: /llms.txt
+    status: 404
+  path_echo_control: passed
+  soft_404_control:
+    path: /.well-known/dentsply-sirona-negative-control-7f3ab91c.json
+    status: 404
+- host: https://api.dscore.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/apis.json
+    status: 404
+  - path: /apis.json
+    status: 404
+  - path: /apis.yml
+    status: 404
+  - path: /.well-known/aauth-resource.json
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+  - path: /llms.txt
+    status: 404
+  path_echo_control: passed
+  soft_404_control:
+    path: /.well-known/dentsply-sirona-negative-control-7f3ab91c.json
+    status: 404
+- host: https://open.dscore.com
+  hit_count: 0
+  catch_all: true
+  note: >-
+    Every path returns HTTP 200 with an identical 29,291-byte HTML developer-portal shell,
+    including the negative control. No document was fetched or saved from this host and no
+    WellKnown/SecurityTxt credit is claimed from it.
+  documents:
+  - path: /.well-known/security.txt
+    status: 200
+    content_type: text/html
+    bytes: 29291
+    note: SPA/login shell, not a document — treated as a miss
+  - path: /.well-known/openid-configuration
+    status: 200
+    content_type: text/html
+    bytes: 29291
+    note: SPA/login shell, not a document — treated as a miss
+  - path: /.well-known/oauth-authorization-server
+    status: 200
+    content_type: text/html
+    bytes: 29291
+    note: SPA/login shell, not a document — treated as a miss
+  - path: /.well-known/oauth-protected-resource
+    status: 200
+    content_type: text/html
+    bytes: 29291
+    note: SPA/login shell, not a document — treated as a miss
+  - path: /.well-known/api-catalog
+    status: 200
+    content_type: text/html
+    bytes: 29291
+    note: SPA/login shell, not a document — treated as a miss
+  - path: /.well-known/ai-plugin.json
+    status: 200
+    content_type: text/html
+    bytes: 29291
+    note: SPA/login shell, not a document — treated as a miss
+  - path: /.well-known/apis.json
+    status: 200
+    content_type: text/html
+    bytes: 29291
+    note: SPA/login shell, not a document — treated as a miss
+  - path: /apis.json
+    status: 200
+    content_type: text/html
+    bytes: 29291
+    note: SPA/login shell, not a document — treated as a miss
+  - path: /apis.yml
+    status: 200
+    content_type: text/html
+    bytes: 29291
+    note: SPA/login shell, not a document — treated as a miss
+  - path: /.well-known/aauth-resource.json
+    status: 200
+    content_type: text/html
+    bytes: 29291
+    note: SPA/login shell, not a document — treated as a miss
+  - path: /.well-known/agent-card.json
+    status: 200
+    content_type: text/html
+    bytes: 29291
+    note: SPA/login shell, not a document — treated as a miss
+  - path: /.well-known/agent.json
+    status: 200
+    content_type: text/html
+    bytes: 29291
+    note: SPA/login shell, not a document — treated as a miss
+  - path: /llms.txt
+    status: 200
+    content_type: text/html
+    bytes: 29291
+    note: SPA/login shell, not a document — treated as a miss
+  path_echo_control: failed
+  soft_404_control:
+    path: /.well-known/dentsply-sirona-negative-control-7f3ab91c.json
+    status: 200
+    bytes: 29291
+- host: https://service.dscore.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/apis.json
+    status: 404
+  - path: /apis.json
+    status: 404
+  - path: /apis.yml
+    status: 404
+  - path: /.well-known/aauth-resource.json
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+  - path: /llms.txt
+    status: 404
+  path_echo_control: passed
+  soft_404_control:
+    path: /.well-known/dentsply-sirona-negative-control-7f3ab91c.json
+    status: 404
+- host: https://dscore.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/apis.json
+    status: 404
+  - path: /apis.json
+    status: 404
+  - path: /apis.yml
+    status: 404
+  - path: /.well-known/aauth-resource.json
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+  - path: /llms.txt
+    status: 404
+  path_echo_control: passed
+  soft_404_control:
+    path: /.well-known/dentsply-sirona-negative-control-7f3ab91c.json
+    status: 404
+security_txt:
+  file: dentsply-sirona-security.txt
+  fields:
+    contact: tel:+1704-587-0453
+    encryption: https://www.dentsplysirona.com/pgp-key.txt
+    preferred_languages: en
+    canonical: https://www.dentsplysirona.com/.well-known/security.txt
+    policy: https://www.dentsplysirona.com/privacy-policy
+  defects:
+  - >-
+    No `Expires:` field. RFC 9116 §2.5.5 makes Expires REQUIRED, so this document is not
+    conformant.
+  - >-
+    `Encryption:` points at https://www.dentsplysirona.com/pgp-key.txt, which returns HTTP 404 —
+    there is no key to encrypt a report with.
+  - >-
+    `Policy:` points at https://www.dentsplysirona.com/privacy-policy, which redirects to the
+    consumer privacy policy, not a vulnerability-disclosure policy.
+  - >-
+    `Contact:` is a telephone number only. There is no security@ address and no web report form,
+    so a researcher outside North American business hours has no asynchronous channel.

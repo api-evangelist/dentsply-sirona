@@ -1,0 +1,47 @@
+generated: '2026-09-06'
+method: searched
+source: openapi/dentsply-sirona-intraoral-exposure-openapi.yml, openapi/dentsply-sirona-intraoral-modality-openapi.yml
+docs: https://github.com/dsimaging/dsio-modality-api/wiki/Authentication
+notes: >-
+  Derived from the three first-party OpenAPI documents Dentsply Sirona Imaging publishes on
+  GitHub, then upgraded from the Modality API wiki authentication page. The DS Core cloud API
+  (api.dscore.com) publishes no public authentication documentation — open.dscore.com requires a
+  partner account before any reference is reachable — so no DS Core scheme is recorded here.
+summary:
+  types:
+  - apiKey
+  - http
+  api_key_in:
+  - header
+  oauth2_flows: []
+schemes:
+- name: BasicAuth
+  type: http
+  scheme: basic
+  sources:
+  - openapi/dentsply-sirona-intraoral-modality-openapi.yml
+  docs: https://github.com/dsimaging/dsio-modality-api/wiki/Authentication
+  description: >-
+    HTTP Basic. The provider's wiki states: "Authenticated requests for the Dentsply Sirona
+    Intraoral Modality API follow the Basic authentication method" and "Use of the Dentsply Sirona
+    Intraoral Modality API requires an API key. The API key serves as the password and, with the
+    user name, provides the necessary credentials."
+  credential_issuance: >-
+    "Application developers who have been approved for use with this API will obtain their API key
+    directly from Dentsply Sirona." There is no self-service key issuance.
+- name: ApiKeyAuth
+  type: apiKey
+  in: header
+  parameter: X-API-Key
+  sources:
+  - openapi/dentsply-sirona-intraoral-exposure-openapi.yml
+  description: >-
+    Applied globally by the Intraoral Exposure API spec (top-level `security: [ApiKeyAuth]`).
+    That document is a protocol specification for X-ray generator vendors to implement, so the key
+    is issued by whoever operates the generator service, not by Dentsply Sirona.
+unauthenticated_surfaces:
+- openapi/dentsply-sirona-intraoral-filters-openapi.yml declares no securitySchemes; the Filters
+  API is a loopback service on the same workstation as the Modality service.
+gaps:
+- DS Core API (https://api.dscore.com) authentication is not publicly documented; the reference is
+  behind the open.dscore.com partner login.

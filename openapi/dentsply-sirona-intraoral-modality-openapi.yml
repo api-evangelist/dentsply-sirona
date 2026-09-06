@@ -1,0 +1,978 @@
+openapi: 3.0.1
+info:
+  title: Dentsply Sirona Intraoral Modality API
+  description: >
+    This API is used for acquisition and control of Intraoral sensors. The Devices section provides methods for retrieving information about available intraoral devices (i.e., USB or WiFi interfaces). The Acquisition section provides methods for acquisition of images from a device.
+  version: "1.0"
+
+servers:
+  - url: 'https://localhost:43809/api/dsio/modality/v1'
+    description: Default endpoint for local Sensor Plugin service
+
+tags:
+  - name: Devices
+    description: >
+      The device management API provides methods to retrieve information, such as names, icons and status for devices.
+
+  - name: Images
+    description: >
+      The Acquisition API provides methods to acquire one or more images from a device.
+
+paths:
+#-----------------------------------------
+# Devices API
+#-----------------------------------------
+  /devices:
+    get:
+      tags: [Devices]
+      operationId: getAllDevices
+      summary: Get All Devices
+      description: Returns a list of the devices that this service currently provides.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DeviceInfo'
+
+  /devices/subscribe:
+    get:
+      tags: [Devices]
+      operationId: subscribeDevices
+      summary: Subscribe to Device Events
+      description: >
+        Subscribe to changes in the Device list using Server Sent Events (EventSource). The API service will send this event when a device is added, removed or changed. The event data consists of a `DeviceInfo` object indicating the device that was affected. API consumers can update their own list accordingly, or retrieve an updated list of devices using the `GET /devices` method.
+
+
+        The service will send a periodic heartbeat message in order to keep the connection active. The frequency of the heartbeat can be controlled by the optional query parameter, heartbeat.
+      parameters:
+        - name: heartbeat
+          in: query
+          description: An optional parameter specifying the desired heartbeat interval in ms.  A value of 0 will disable the heartbeat.
+          required: false
+          schema:
+            type: number
+            default: 20000
+            minimum: 1000
+            maximum: 60000
+      responses:
+        '200':
+          description: Subscription started
+          content:
+            text/event-stream:
+              schema:
+                type: object
+                format: chunked
+                properties:
+                  event:
+                    type: string
+                    enum: [message, heartbeat]
+                  data:
+                    oneOf:
+                      - $ref: '#/components/schemas/DeviceEventData'
+                      - $ref: '#/components/schemas/Heartbeat'
+                    
+                example: >
+                  event: heartbeat
+                  
+                  data: { "heartbeatTimeout": 20000 }
+                  
+                  
+                  event: message
+                  
+                  data: { "action":"changed","deviceInfo":{"deviceId":"bc91c079-dabe-0170-1c5e-6ee92b3f4a35","name":"Schick 33: 213402981","iconUrl":"http://example.com/api/devices/bc91c079-dabe-0170-1c5e-6ee92b3f4a35/icon.png","hasSensor":false,"status":"Available","interfaceType":"usb","modelName":"Schick AE USB Interface","serialNumber":"34-05921813233","version":"1.2","battery":null} }
+
+  /devices/{deviceId}:
+    get:
+      tags: [Devices]
+      operationId: getDeviceInfo
+      summary: Get Device Information
+      description: Returns information about a device.
+      parameters:
+        - name: deviceId
+          in: path
+          description: The Id of the device
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeviceInfo'
+        '404':
+          description: Device not found
+
+  /devices/{deviceId}/sensor:
+    get:
+      tags: [Devices]
+      operationId: getSensorInfo
+      summary: Get Sensor Information
+      description: Returns information about the currently connected sensor. An empty response indicates no sensor connected.
+      parameters:
+        - name: deviceId
+          in: path
+          description: The Id of the device
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SensorInfo'
+        '404':
+          description: Device not found
+
+#-----------------------------------------
+# Acquisition API
+#-----------------------------------------
+  /acquisition:
+    post:
+      tags: [Images]
+      operationId: createAcquisitionSession
+      summary: Create Acquisition Session
+      description: >
+        Creates an acquisition session using the supplied device. 
+        
+          To acquire images from a device, you must first create an `AcquisitionSession`. When a session is created for a device, that device is marked as in use (Device Status changes to `InUse`). The session and the images associated with it persists until the session is deleted. The basic steps needed to acquire an image are:
+          - Create a new session with an `Available` device
+            - Subscribe to `AcquisitionStatus` Event in order react to exposure readiness
+            - Send `AcquisitionInfo` with `enable` set to true
+            - Wait for `AcquisitionStatus` to report `ready` as true
+            - Inform user that they may initiate x-ray exposure
+            - Wait for `AcquisitionStatus` to report `NewImage` or a new `lastImageId` is provided 
+            - Retrieve `ImageInfo` for the newly acquired image and download the image using the `imageUrl` property
+          - Delete the acquisition session
+
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AcquisitionSessionInfo'
+      responses:
+        '201':
+          description: Session was successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AcquisitionSession'
+        '404':
+          description: Device not found
+        '409':
+          description: Device is in use
+        '500':
+          description: Internal error
+        '507':
+          description: Not enough storage available
+    get:
+      tags: [Images]
+      operationId: getSessions
+      summary: Get Acquisition Sessions
+      description: Retrieve a list of `AcquisitionSession` objects previously created that have yet not been deleted. The query may be filtered for sessions containing a given device using the optional `deviceId` parameter. If this parameter is supplied, the response will contain exactly one `AcquisitionSession` or an empty array if no matching session is found.
+      parameters:
+        - name: deviceId
+          in: query
+          description: Optional id of a device that will be used to filter the results.
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AcquisitionSession'
+
+  /acquisition/{sessionId}:
+    get:
+      tags: [Images]
+      operationId: getAcquisitionSession
+      summary: Get Acquisition Session
+      description: Retrieve acquisition session information.
+      parameters:
+        - name: sessionId
+          in: path
+          description: The session Id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AcquisitionSession'
+        '404':
+          description: Session not found
+    put:
+      tags: [Images]
+      operationId: updateAcquisitionSession
+      summary: Update Acquisition Session
+      description: Update an acquisition session. You may use this method to switch devices or change the client name.
+      parameters:
+        - name: sessionId
+          in: path
+          description: The session Id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AcquisitionSessionInfo'
+      responses:
+        '200':
+          description: Session was successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AcquisitionSession'
+        '404':
+          description: Session not found
+        '409':
+          description: Device is in use
+    delete:
+      tags: [Images]
+      operationId: deleteAcquisitionSession
+      summary: Delete Acquisition Session
+      description: Delete an acquisition session. When you have finished image acquisition and retrieved all images, delete the `AcquisitionSession` to make the device available again. Deleting the session will delete all images associated with it.
+      parameters:
+        - name: sessionId
+          in: path
+          description: The session Id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200': 
+          description: Successfully deleted session
+        '404':
+          description: Session not found
+
+  /acquisition/{sessionId}/status:
+    get:
+      tags: [Images]
+      operationId: getAcquisitionStatus
+      summary: Get Acquisition Status
+      description: Returns current status of an exposure. This may be used to poll the status of the current exposure.
+      parameters:
+        - name: sessionId
+          in: path
+          description: The session Id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AcquisitionStatus'
+        '404':
+          description: Session not found
+
+  /acquisition/{sessionId}/status/subscribe:
+    get:
+      tags: [Images]
+      operationId: subscribeAcquisitionStatus
+      summary: Subscribe to Acquisition Status Events
+      description: >
+        Subscribe to the exposure status using Server Sent Events (EventSource). The API service will send status updates whenever the Acquisition state changes. By subscribing to exposure status, a client may react quickly to state transitions making the application feel more responsive.
+
+
+        The service will send a periodic heartbeat message in order to keep the connection active. The frequency of the heartbeat can be controlled by the optional query parameter, heartbeat.
+      parameters:
+        - name: sessionId
+          in: path
+          description: The session Id
+          required: true
+          schema:
+            type: string
+        - name: heartbeat
+          in: query
+          description: An optional parameter specifying the desired heartbeat interval in ms.  A value of 0 will disable the heartbeat.
+          required: false
+          schema:
+            type: number
+            default: 1000
+            minimum: 1000
+            maximum: 10000
+      responses:
+        '200':
+          description: Subscription started
+          content:
+            text/event-stream:
+              schema:
+                type: object
+                format: chunked
+                properties:
+                  event:
+                    type: string
+                    enum: [message, heartbeat]
+                  data:
+                    oneOf:
+                      - $ref: '#/components/schemas/AcquisitionStatus'
+                      - $ref: '#/components/schemas/Heartbeat'
+                    
+                example: >
+                  event: heartbeat
+                  
+                  data: { "heartbeatTimeout": 1000 }
+                  
+                  
+                  event: message
+                  
+                  data: { "ready": true, "state": "Ready", "lastImageId": "04d2b36f-3613-4c29-b130-923c93a6187f", "totalImages": 4 }
+        '404':
+          description: Session not found
+
+  /acquisition/{sessionId}/info:
+    get:
+      tags: [Images]
+      operationId: getAcquisitionInfo
+      summary: Get Acquisition Information
+      description: Returns AcquisitionInfo for the next exposure.
+      parameters:
+        - name: sessionId
+          in: path
+          description: The session Id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AcquisitionInfo'
+        '404':
+          description: Session not found
+                
+    put:
+      tags: [Images]
+      operationId: setAcquisitionInfo
+      summary: Update Acquisition Information
+      description: Set AcquisitionInfo for the next exposure. To initiate an exposure, you must use this method to enable acquisition and provide information about how the sensor is oriented. `AcquisitionStatus` will report the state `NoAcquisitionInfo` if you have not yet provided `AcquisitionInfo`.
+      parameters:
+        - name: sessionId
+          in: path
+          description: The session Id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AcquisitionInfo'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AcquisitionInfo'
+        '400':
+          description: Bad Request - Invalid value for rotation
+        '404':
+          description: Session not found
+        '423':
+          description: Locked - AcquisitionInfo cannot be modified while reading an exposure.
+
+  /acquisition/{sessionId}/images:
+    get:
+      tags: [Images]
+      operationId: getImages
+      summary: Get All Images
+      description: Returns information about all images acquired in the session
+      parameters:
+        - name: sessionId
+          in: path
+          description: The session Id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ImageInfo'
+        '404':
+          description: Session not found
+
+  /acquisition/{sessionId}/images/{imageId}:
+    get:
+      tags: [Images]
+      operationId: getImage
+      summary: Get Image
+      description: Returns information about the specified image
+      parameters:
+        - name: sessionId
+          in: path
+          description: The session Id
+          required: true
+          schema:
+            type: string
+        - name: imageId
+          in: path
+          description: The image Id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImageInfo'
+        '404':
+          description: Session or image not found
+
+  /acquisition/{sessionId}/images/{imageId}/media:
+    get:
+      tags: [Images]
+      operationId: getImageMedia
+      summary: Get Image Media
+      description: Returns the media representing the specified image
+      parameters:
+        - name: sessionId
+          in: path
+          description: The session Id
+          required: true
+          schema:
+            type: string
+        - name: imageId
+          in: path
+          description: The image Id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            image/*:
+              schema:
+                type: string
+                format: binary
+        '404':
+          description: Session or image not found
+
+  /acquisition/{sessionId}/images/{imageId}/preview:
+    get:
+      tags: [Images]
+      operationId: getImagePreview
+      summary: Get Image Preview Media
+      description: Returns the media representing a thumbnail of specified image
+      parameters:
+        - name: sessionId
+          in: path
+          description: The session Id
+          required: true
+          schema:
+            type: string
+        - name: imageId
+          in: path
+          description: The image Id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            image/*:
+              schema:
+                type: string
+                format: binary
+        '404':
+          description: Session or image not found
+
+security:
+  - BasicAuth: []
+
+#-----------------------------------------
+# Models
+#-----------------------------------------
+
+components:
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: basic
+
+  schemas:
+    DeviceStatus:
+      description: >
+        Describes the current status of the device:
+          * `Available` - Device is available for an acquisition
+          * `InUse` - Device is currently being used for an acquisition
+          * `Unavailable` - Device is not available at this time
+          * `Error` Device encountered an unspecified error
+          
+          The current status must be `Available` in order to use it for an acquisition. If the device status returns `InUse`, it indicates that the device is currently being used for an acquisition.
+      type: string
+      enum:
+        - Available
+        - InUse
+        - Unavailable
+        - Error
+      example: Available
+
+    DeviceEventData:
+      description: Describes changes to the list of devices including added, removed and changed devices. A device may change if a different sensor is connected causing the name and icon to be modified or when a device is used for a session causing the status to be modified.
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            action:
+              type: string
+              enum: ['added', 'removed', 'changed']
+              example: 'changed'
+            deviceInfo:
+              $ref: '#/components/schemas/DeviceInfo'
+    
+    Heartbeat:
+      description: Contains the timeout interval for a heartbeat message sent to subscribed clients.
+      type: object
+      properties:
+        heartbeatTimeout:
+          description: The heartbeat timeout interval in ms.
+          type: number
+          example: 1000
+    
+    DeviceInfo:
+      description: Detailed information about an intraoral device (sensor interface)
+      type: object
+      properties:
+        deviceId:
+          description: Unique Id of the device
+          type: string
+          example: bc91c079-dabe-0170-1c5e-6ee92b3f4a35
+        name:
+          description: Descriptive name of the device 
+          type: string
+          example: "Schick 33: 213402981"
+        iconUrl:
+          description: Url for an icon representing the device
+          type: string
+          example: http://example.com/api/devices/bc91c079-dabe-0170-1c5e-6ee92b3f4a35/icon.png
+        hasSensor:
+          description: Flag indicating if a sensor is connected to this device
+          type: boolean
+        status:
+          $ref: '#/components/schemas/DeviceStatus'
+        interfaceType:
+          description: The interface used to connect the device to the system. For example, a USB device may report *usb*, while a network based device may report *network*.
+          type: string
+          example: usb
+        modelName:
+          description: Manufacturer's model name
+          type: string
+          example: Schick AE USB Interface
+        serialNumber:
+          description: Serial number of the device
+          type: string
+          example: 34-05921813233
+        version:
+          description: Version of software running on the device
+          type: string
+          example: 1.2
+        battery:
+          $ref: '#/components/schemas/BatteryInfo'
+          
+    BatteryInfo:
+      description: Contains information about the current state of the battery in the device if applicable.
+      type: object
+      properties:
+        hasBattery:
+          description: Flag indicating if the device is battery powered
+          type: boolean
+          example: true
+        percentRemaining:
+          description: A number in the range 0-100 indicating the percentage of battery power remaining
+          type: number
+          format: float
+          example: 78.0
+        level:
+          description: >
+            A coarse description of the battery power level. May be used to update a color scheme in the user interface 
+              * `Low` - The battery is low and should be recharged
+              * `Good` - The battery level is sufficient
+              * `Full` - The battery was recently recharged
+          type: string
+          enum: [Low, Good, Full]
+          example: Good
+
+    SensorInfo:
+      description: Detailed information about an intraoral sensor.
+      type: object
+      properties:
+        modelName:
+          description: Manufacturer's model name of the sensor
+          type: string
+          example: Schick 33
+        serialNumber:
+          description: Serial number of sensor
+          type: string
+          example: 213402981
+        brand:
+          description: Branding information of sensor
+          type: string
+          example: Schick
+        family:
+          description: Product family of sensor
+          type: string
+          example: Supreme
+        size:
+          description: Sensor size
+          type: number
+          enum: [0,1,2]
+          example: 2
+        width:
+          description: Width of sensor in pixels
+          type: number
+          example: 2400
+        height:
+          description: Height of sensor in pixels
+          type: number
+          example: 1708
+        supportsBinning:
+          description: Flag indicating if the sensor supports Binning (see `AcquisitionInfo`)
+          type: boolean
+        version:
+          description: Version of software running on the sensor
+          type: string
+          example: 0.15
+
+    AcquisitionSessionInfo:
+      description: Information used to create or update an acquisition session
+      type: object
+      properties:
+        deviceId:
+          description: Unique Id of the device
+          type: string
+          example: bc91c079-dabe-0170-1c5e-6ee92b3f4a35
+        clientName:
+          description: A client provided string used to identify the client that created the session
+          type: string
+          example: OP4 Workstation
+        context:
+          description: An arbitrary object that can be used to store custom information about an acquisition session.
+          type: object
+          additionalProperties: {}
+
+    AcquisitionSession:
+      description: Information about an active acquisition session. This object is similar to AcquisitionSessionInfo, but with the addition of the session Id.
+      type: object
+      properties:
+        sessionId:
+          description: Unique Id for the acquisition session
+          type: string
+          example: be362e71-9c18-4f3c-a9ab-d536d7a8b4fd
+        deviceId:
+          description: Unique Id of the device
+          type: string
+          example: bc91c079-dabe-0170-1c5e-6ee92b3f4a35
+        clientName:
+          description: A client provided string used to identify the client that created this session
+          type: string
+          example: OP4 Workstation
+        createdOn:
+          description: Timestamp indicating the time that the session was created.
+          type: string
+          format: date-time
+          example: 11-01-2020
+        context:
+          description: An arbitrary object that can be used to store custom information about an acquisition session.
+          type: object
+          additionalProperties: {}
+    
+    AcquisitionStatus:
+      description: Describes the state of the current exposure
+      type: object
+      properties:
+        ready:
+          description: Indicates exposure readiness of the sensor. Use this property to update the user with information regarding exposure readiness.
+          type: boolean
+          example: true
+        state:
+          description: >
+            The state of the current exposure. For a typical exposure, the acquisition state property will start with `NoAcquisitionInfo`. Once the client has supplied AcquisitionInfo with `enable` set to true and the sensor is ready to acquire, the state will transition to `Ready`. When the user exposes the sensor, the state will automatically transition to `Reading`, followed by `Processing`, `Storing`, `NewImage` and finally return to `NoAcquisitionInfo` as it prepares for the next exposure. 
+            
+              The state property will contain one of the following values:
+              * `Error` - An error has occurred and acquisition is unavailable.
+              * `LowBattery` - A warning that the device does not have enough power to continue. The device must be recharged.
+              * `InsufficientStorage` - There is not enough space available to store the next exposure
+              * `NoHardware` - The device has been lost or is no longer connected
+              * `NoSensor` - There is no sensor connected to the device
+              * `Initializing` - The device is initializing the sensor and preparing for an exposure
+              * `NoAcquisitionInfo` - AcquisitionInfo has not been sent yet. The client must send AcquisitionInfo prior to each exposure.
+              * `Ready` - The device is ready for an exposure. Note that the device may be ready, but the client has disabled acquisition. In this case, the ready property above would be false.
+              * `Reading` - An exposure occurred and the sensor is being read.
+              * `Processing` - The device is processing image data received from the sensor
+              * `Storing` - The device is storing image data
+              * `NewImage` - Indicates that an exposure just completed and a new image is available.
+          type: string
+          enum:
+            - Error
+            - LowBattery
+            - InsufficientStorage
+            - NoHardware
+            - NoSensor
+            - Initializing
+            - NoAcquisitionInfo
+            - Ready
+            - Reading
+            - Processing
+            - Storing
+            - NewImage
+          example: Ready
+        lastImageId:
+          description: The id of the most recent image acquired. This property will be updated when an image is acquired and the state transitions to `NewImage`.
+          type: string
+          example: 04d2b36f-3613-4c29-b130-923c93a6187f
+        totalImages:
+          description: The total number of images acquired so far in this session. This property will be updated when an image is acquired and the state transitions to `NewImage`.
+          type: number
+          example: 4
+
+    AcquisitionInfo:
+      description: Provides information regarding an acquisition. AcquisitionInfo must be provided prior to each exposure.
+      type: object
+      properties:
+        enable:
+          description: Enable or disable the current acquisition. Note that a client may enable acquisition, but the device may not be ready or able to perform an acquisition (i.e., no sensor connected). See `AcquisitionStatus` to determine exposure readiness.
+          type: boolean
+          example: true
+        rotation:
+          description: >
+            Amount in degrees that the sensor is rotated in a clockwise direction with respect to the neutral position (cable exits south) as viewed from the perspective of the x-ray source. The device will rotate an acquired image accordingly based on this value.
+          
+              Here are some examples:
+            
+              1. An anterior PA of the patient's maxilla should set this value to 0 (sensor is in the neutral position).
+              1. A bitewing on the patient's left side should set this value to 90.
+              1. An anterior PA of the patient's mandible should set this value to 180 (sensor is *upside down*).
+              1. A bitewing on the patient's right side should set this value to 270.
+              
+              A value of null may be used for this property which indicates no rotation is applied (effectively the same as 0). In cases where null is supplied for an update API, the current value of rotation will not be changed.
+          
+          type: number
+          enum: [0, 90, 180, 270]
+          nullable: true
+          example: 90
+        binning:
+          description: >
+            The binning mode used to acquire the image. When binning mode is set to Binned2x2, the sensor combines 4 pixels in a 2x2 neighborhood to create a single pixel. The resulting image is 1/4th the size of an Unbinned image, but with lower resolution. Note that some sensors may not support binning, in which case the binning property cannot be changed.
+            
+              A value of null may be used for this property which indicates that the service will use the default binning mode for the attached sensor. In cases where null is supplied for an update API, the current value of binning will not be changed.
+          
+          type: string
+          enum: [Unbinned, Binned2x2]
+          nullable: true
+          example: Unbinned
+        applyLut:
+          description: Flag to indicate if a dynamic gamma map should be applied to the image to optimize contrast. When this value is true, the image will be enhanced with a nonlinear map described by `LutInfo`.
+          type: boolean
+          example: true
+        context:
+          description: An arbitrary object that can be used to store custom information about an acquisition. This data will be available in the `ImageInfo.acquisitionInfo` property of the resulting image.
+          type: object
+          additionalProperties: {}
+
+    ExposureInfo:
+      description: Describes the quality of the exposure. The optimal range is defined by [`low`, `high`], with an optimal exposure value defined by `optimal` If the exposure `value` is higher than the optimal range, the user could reduce the x-ray exposure to improve image quality. Likewise, if the value is lower than the optimal range, the user could increase the x-ray exposure to improve image quality.
+      type: object
+      properties:
+        min:
+          description: The minimum value of the exposure scale
+          type: number
+          format: double
+          example: -1.0
+        max:
+          description: The maximum value of the exposure scale
+          type: number
+          format: double
+          example: +1.0
+        low:
+          description: The low end of the optimal exposure range
+          type: number
+          format: double
+          example: -0.50
+        high:
+          description: The high end of the optimal exposure range
+          type: number
+          format: double
+          example: +0.50
+        optimum:
+          description: The optimal value for a good exposure in the range [low, high]
+          type: number
+          format: double
+          example: 0.0
+        value:
+          description: The measured exposure value.
+          type: number
+          format: double
+          example: -0.24723
+
+    LutInfo:
+        description: |
+          Describes the lookup table (LUT) mapping applied to an image. Images acquired by this service may be mapped using a non-linear LUT in order to provide an image suitable for presentation (see the `applyLut` property of `AcquisitionInfo`). The LUT is created according to the following equation:
+          
+            Y = m(x&prime;<sup>&gamma;</sup>) + b
+            
+            where
+            * m is the slope
+            * b is the offset
+            * &gamma; is the gamma value
+            * x&prime; is a normalized pixel scaled to the range [0,1]
+          
+          If desired, the original pixel data (X) can be recovered from the mapped pixel (Y) using the LutInfo:
+            
+            X = (X<sub>max</sub> - X<sub>min</sub>) * [(Y - b) / m]<sup>1/&gamma;</sup> + X<sub>min</sub>
+            
+            where
+            * m is the slope
+            * b is the offset
+            * &gamma; is the gamma value
+            * X<sub>min</sub> is the minimum gray value
+            * X<sub>max</sub> is the maximum gray value
+          
+          It is typical for the minimum gray value to be larger than the maximum gray level. This way, the LUT mapping produces an inverted non-linear optimized image.
+
+        type: object
+        properties:
+          gamma:
+            description: Gamma value used in map
+            type: number
+            format: double
+            example: 2.3
+          slope:
+            description: Slope value used in map
+            type: number
+            format: double
+            example: 65535.0
+          offset:
+            description: Offset value used in map
+            type: number
+            format: double
+            example: 0.0
+          totalGrays:
+            description: Total number of gray values in original (unmapped) image
+            type: number
+            format: integer
+            example: 4096
+          minimumGray:
+            description: Minimum gray value in original (unmapped) image
+            type: number
+            format: integer
+            example: 3612
+          maximumGray:
+            description: Maximum gray value in original (unmapped) image
+            type: number
+            format: integer
+            example: 418
+
+    HashInfo:
+      description: A hash used to verify integrity of pixel data.
+      type: object
+      properties:
+        alg:
+          description: Algorithm used to compute the hash.
+          type: string
+          enum:
+            - MD5
+            - SHA256
+          example: MD5
+        hash:
+          description: The hash value
+          type: string
+          example: 536c36b632ea8256a50ec6396d4e7ea3
+
+    ImageInfo:
+      description: Provides detailed information about acquired images, including the format of the image data and URLs that can be used to retrieve image data. The device does not perform any enhancements or processing of the image, however, it may apply a contrast map to the image so that the image delivered is suitable for display. The contrast map is a nonlinear reversible gamma map and it is described in the `LutInfo` property.
+      type: object
+      properties:
+        id:
+          description: Id of image
+          type: string
+          example: 160c98f9-d188-4118-94c4-697161fd5caf
+        createdOn:
+          description: Timestamp indicating the time that the image was created.
+          type: string
+          format: date-time
+          example: 11-01-2020
+        width:
+          description: Width of image in pixels
+          type: number
+          format: integer
+          example: 2400
+        height:
+          description: Height of image in pixels
+          type: number
+          format: integer
+          example: 1708
+        bitsPerPixel:
+          description: Number of bits used to represent each pixel
+          type: number
+          format: integer
+          example: 12
+        bytesPerPixel:
+          description: Number of bytes required to store a pixel.
+          type: number
+          format: integer
+          example: 2
+        pixelSizeX:
+          description: Horizontal length of a pixel in mm
+          type: number
+          format: float
+          example: 0.015
+        pixelSizeY:
+          description: Vertical length of a pixel in mm
+          type: number
+          format: float
+          example: 0.015
+        previewUrl:
+          description: Url of a preview (thumbnail) image. This image may be compressed and resized to a smaller dimension.
+          type: string
+          example: http://example.com/api/acquisition/be362e71-9c18-4f3c-a9ab-d536d7a8b4fd/images/160c98f9-d188-4118-94c4-697161fd5caf/preview.jpg
+        imageUrl:
+          description: Url of the image. The image returned from this url will be represented as a standard uncompressed image format, such as, PNG or TIFF.
+          type: string
+          example: http://example.com/api/acquisition/be362e71-9c18-4f3c-a9ab-d536d7a8b4fd/images/160c98f9-d188-4118-94c4-697161fd5caf/image.png
+        pixelHash:
+          description: Hash of the pixel data extracted from the image available via `imageUrl`
+          allOf:
+            - $ref: '#/components/schemas/HashInfo'
+        deviceInfo:
+          $ref: '#/components/schemas/DeviceInfo'
+        sensorInfo:
+          $ref: '#/components/schemas/SensorInfo'
+        acquisitionInfo:
+          $ref: '#/components/schemas/AcquisitionInfo'
+        lutInfo:
+          $ref: '#/components/schemas/LutInfo'
+        exposureInfo:
+          $ref: '#/components/schemas/ExposureInfo'

@@ -1,0 +1,70 @@
+generated: '2026-09-06'
+method: searched
+source: >-
+  https://status.dscore.com/, https://github.com/dsimaging/dsio-modality-api/releases,
+  https://github.com/dsimaging/io-exposure-service/blob/main/docs/Recommendations.md
+notes: >-
+  Dentsply Sirona runs a real public status page for DS Core. It publishes no deprecation policy,
+  no Sunset/Deprecation header support, and no SLA for any API. Version lifecycle for the intraoral
+  imaging APIs is visible only as GitHub releases, all of which stopped at v1.0 in August 2022.
+versioning:
+  scheme: uri-path
+  current: v1
+  evidence: >-
+    Both intraoral APIs pin the version in the path — /api/dsio/modality/v1 and
+    /api/dsio/filters/v1. The Intraoral Exposure API's own Recommendations.md tells implementers to
+    do the same: "we recommend that developers use the URL Path technique by selecting an
+    appropriate endpoint for the service that includes the API version."
+  docs: https://github.com/dsimaging/io-exposure-service/blob/main/docs/Recommendations.md
+deprecation:
+  policy_url: null
+  sunset_header: false
+  note: >-
+    No deprecation policy is published for any of the four APIs, and no operation in any of the
+    three specs carries `deprecated: true`. The io-exposure-service repository was ARCHIVED by the
+    provider without a deprecation notice, a sunset date, or a successor named — the contract is
+    still served read-only at its old URL with nothing to tell a consumer it is no longer
+    maintained.
+sla:
+  url: null
+  uptime_target: null
+status_page:
+  url: https://status.dscore.com/
+  resolves_to: https://status.r1.dscore.com/
+  http_status: 200
+  covers: >-
+    "Core platform services including login, device connectivity, imaging, patient workflow, and
+    CEREC on Core."
+  components:
+  - Login & account access
+  - Connected scan upload (Primescan / TRIOS)
+  - Direct-to-cloud scanning (Primescan 2)
+  - Online media library
+  - Connected X-ray upload & sync (Sidexis)
+  - Canvas
+  - Smart view
+  - CEREC on DS Core designs
+  - Ordering
+  - Manufacturing
+  subscribe: email notification
+  note: >-
+    Covers the DS Core cloud platform. The locally-installed intraoral imaging services are not in
+    scope of any status surface — they run on the practice workstation.
+releases:
+  source: https://github.com/dsimaging/dsio-modality-api/releases
+  latest: v1.0
+  latest_date: '2022-08-04'
+  note: >-
+    Both imaging repositories reached v1.0 on 2022-08-04 and have shipped no release since, though
+    the repositories were last modified 2026-06-11.
+deprecated_operations: []
+repository_status:
+- repo: https://github.com/dsimaging/dsio-modality-api
+  archived: false
+  last_push: '2026-06-11'
+- repo: https://github.com/dsimaging/dsio-filters-api
+  archived: false
+  last_push: '2026-06-11'
+- repo: https://github.com/dsimaging/io-exposure-service
+  archived: true
+  last_push: '2023-02-27'

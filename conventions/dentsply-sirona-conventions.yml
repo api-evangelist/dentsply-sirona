@@ -1,0 +1,174 @@
+generated: '2026-09-06'
+method: derived
+source: >-
+  openapi/dentsply-sirona-intraoral-modality-openapi.yml,
+  openapi/dentsply-sirona-intraoral-filters-openapi.yml,
+  openapi/dentsply-sirona-intraoral-exposure-openapi.yml,
+  https://github.com/dsimaging/dsio-modality-api/wiki,
+  https://github.com/dsimaging/io-exposure-service/blob/main/docs/Recommendations.md
+notes: >-
+  Cross-cutting semantics for the three first-party intraoral imaging contracts Dentsply Sirona
+  Imaging publishes on GitHub. The DS Core cloud API is excluded — its reference is behind the
+  open.dscore.com partner login and nothing about its conventions is publicly observable.
+authentication:
+  style: HTTP Basic (username + Dentsply-issued API key as password)
+  docs: https://github.com/dsimaging/dsio-modality-api/wiki/Authentication
+  see: authentication/dentsply-sirona-authentication.yml
+  note: >-
+    The Filters API declares no securityScheme at all; it is a loopback service on the same
+    workstation. The Exposure API specification applies an X-API-Key header globally.
+idempotency:
+  supported: false
+  coverage: none
+  mechanism: null
+  header: null
+  retention: null
+  evidence: >-
+    No Idempotency-Key header, parameter or extension appears in any of the three specs, and no
+    replay-protection guidance appears in the wiki or the Recommendations document. The four
+    write operations (createAcquisitionSession, updateAcquisitionSession, createImage,
+    modalityImage) are unprotected: a retried createAcquisitionSession either opens a second
+    session or returns 409 depending on device state, and a retried createImage creates a second
+    image resource that must be deleted separately.
+  note: >-
+    PUT operations (updateAcquisitionSession, setAcquisitionInfo) are idempotent by HTTP method
+    semantics, but method semantics are not a replay-protection contract and are not counted here.
+pagination:
+  style: offset
+  applies_to:
+  - openapi/dentsply-sirona-intraoral-exposure-openapi.yml#getExposures
+  request_params:
+  - name: skip
+    meaning: number of exposures to skip
+  - name: limit
+    meaning: maximum exposures to return; maximum permitted value 50
+  - name: startTime
+    meaning: oldest exposure to return (RFC 3339)
+  - name: endTime
+    meaning: newest exposure to return (RFC 3339)
+  response_fields:
+  - total
+  - skip
+  - limit
+  - exposures
+  note: >-
+    Only one operation across all three APIs is paginated. The modality and filters collections
+    (getAllDevices, getSessions, getImages) return unbounded arrays with no paging envelope,
+    because they are bounded by the hardware attached to one workstation.
+field_expansion:
+  supported: false
+sparse_fields:
+  supported: false
+metadata:
+  supported: false
+request_tracing:
+  request_id_header: null
+  supported: false
+  note: no correlation or request-id header is declared anywhere in the three specs.
+versioning:
+  style: uri-path
+  current: v1
+  see: lifecycle/dentsply-sirona-lifecycle.yml
+error_envelope:
+  media_type: null
+  shape: none
+  note: >-
+    No error body is declared on any 4xx/5xx response. The status code is the entire error
+    contract. See errors/dentsply-sirona-problem-types.yml.
+rate_limit_signaling:
+  headers: []
+  status_on_exhaustion: null
+  documented: false
+  see: rate-limits/dentsply-sirona-rate-limits.yml
+date_time:
+  format: RFC 3339
+  evidence: >-
+    "All date time fields defined in the API specification are represented using the standard
+    Internet Date / Time Format defined in RFC 3339."
+    (https://github.com/dsimaging/io-exposure-service/blob/main/docs/Recommendations.md)
+service_discovery:
+  mechanism: mDNS (recommended, not required)
+  service_name: _io-exposure._tcp
+  txt_record: 'v1.0=/api/v1/;v1.1=/api/v1.1/;v2=/api/v2'
+  docs: https://github.com/dsimaging/io-exposure-service/blob/main/docs/Recommendations.md
+  note: >-
+    Unusual and worth recording: because these are local network services with no fixed host, the
+    provider recommends mDNS discovery and an endpoint-per-version TXT record instead of a
+    published base URL.
+events:
+  style: server-sent-events
+  media_type: text/event-stream
+  channels:
+  - openapi/dentsply-sirona-intraoral-modality-openapi.yml#subscribeDevices
+  - openapi/dentsply-sirona-intraoral-modality-openapi.yml#subscribeAcquisitionStatus
+  see: asyncapi/dentsply-sirona-event-surface.yml
+dry_run_mode:
+  supported: false
+  grade: none
+reversibility:
+  grade: documented
+  summary: >-
+    Every create in this surface has a matching delete, and the provider documents that a filter
+    image resource should be deleted when work is finished. No reversal WINDOW is stated anywhere,
+    so this grades `documented`, not `verified`. The `expires` field on an image resource carries
+    a per-resource timestamp, but the retention DURATION behind it is never published — the only
+    figure available is an example value in the schema, which is not a stated policy and is not
+    recorded here as one.
+  write_surfaces:
+  - operation: createAcquisitionSession
+    method: POST
+    reversal: deleteAcquisitionSession
+    reversal_method: DELETE
+    window: null
+    window_source: null
+    note: >-
+      Closes the session and releases the device. Whether images captured in the session survive
+      deletion is not documented.
+  - operation: updateAcquisitionSession
+    method: PUT
+    reversal: null
+    window: null
+    note: >-
+      No undo. A PUT overwrites the session's device binding; the previous value is not retrievable.
+  - operation: setAcquisitionInfo
+    method: PUT
+    reversal: null
+    window: null
+    note: >-
+      No undo, but the operation is blocked with 423 Locked while an exposure is being read, which
+      is the only safety interlock in the surface.
+  - operation: createImage
+    method: POST
+    reversal: deleteImage
+    reversal_method: DELETE
+    window: null
+    window_source: >-
+      openapi/dentsply-sirona-intraoral-filters-openapi.yml — "the resource will be automatically
+      deleted after the `expires` timestamp"; the duration is not stated.
+  - operation: modalityImage
+    method: POST
+    reversal: deleteImage
+    reversal_method: DELETE
+    window: null
+    window_source: >-
+      "This resource will only be available as long as the modality session is active" — bounded by
+      session lifetime, no duration published.
+  - operation: filterSelect / filterSupreme / filterAE / unmapImage
+    method: POST
+    reversal: not-applicable
+    window: null
+    note: >-
+      These POSTs compute and return a filtered PNG; they do not mutate stored state, so there is
+      nothing to reverse. unmapImage returns the raw rendering, which is the practical undo of
+      applying a filter to a displayed image.
+  read_only_apis:
+  - openapi/dentsply-sirona-intraoral-exposure-openapi.yml
+  note_read_only: >-
+    The Intraoral Exposure API has no write operations at all — reversibility, dry_run_mode and
+    idempotency are `na` for that contract.
+cross_links:
+  errors: errors/dentsply-sirona-problem-types.yml
+  lifecycle: lifecycle/dentsply-sirona-lifecycle.yml
+  authentication: authentication/dentsply-sirona-authentication.yml
+  rate_limits: rate-limits/dentsply-sirona-rate-limits.yml
+  agentic_access: agentic-access/dentsply-sirona-agentic-access.yml

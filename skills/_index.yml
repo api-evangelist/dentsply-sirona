@@ -1,0 +1,49 @@
+generated: '2026-09-06'
+method: generated
+source: >-
+  openapi/dentsply-sirona-intraoral-modality-openapi.yml,
+  openapi/dentsply-sirona-intraoral-filters-openapi.yml,
+  openapi/dentsply-sirona-intraoral-exposure-openapi.yml
+notes: >-
+  Packaged Agent Skills generated from the three first-party OpenAPI contracts Dentsply Sirona
+  Imaging publishes on GitHub. Every operationId referenced was verified against the spec. No skill
+  is offered for the DS Core API, because its contract is behind a partner login and there is
+  nothing public to ground one in. The provider publishes no skills or AGENTS.md of its own.
+skills:
+- file: dentsply-sirona-acquire-intraoral-image.md
+  name: Acquire an intraoral image from a Dentsply Sirona sensor
+  api: openapi/dentsply-sirona-intraoral-modality-openapi.yml
+  operations:
+  - getAllDevices
+  - getDeviceInfo
+  - getSensorInfo
+  - createAcquisitionSession
+  - subscribeAcquisitionStatus
+  - setAcquisitionInfo
+  - getAcquisitionStatus
+  - getImages
+  - getImage
+  - getImageMedia
+  - getImagePreview
+  - deleteAcquisitionSession
+- file: dentsply-sirona-apply-image-filter.md
+  name: Apply a Dentsply Sirona intraoral image filter
+  api: openapi/dentsply-sirona-intraoral-filters-openapi.yml
+  operations:
+  - createImage
+  - modalityImage
+  - getImage
+  - getImageMedia
+  - unmapImage
+  - filterSelect
+  - filterSupreme
+  - filterAE
+  - deleteImage
+- file: dentsply-sirona-retrieve-exposure-dose.md
+  name: Retrieve intraoral X-ray exposure dose records
+  api: openapi/dentsply-sirona-intraoral-exposure-openapi.yml
+  operations:
+  - getAllGenerators
+  - getGenerator
+  - getExposures
+  - getExposure

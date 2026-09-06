@@ -1,0 +1,85 @@
+generated: '2026-09-06'
+method: derived
+source: >-
+  openapi/dentsply-sirona-intraoral-modality-openapi.yml,
+  openapi/dentsply-sirona-intraoral-filters-openapi.yml,
+  openapi/dentsply-sirona-intraoral-exposure-openapi.yml
+format: http-status
+notes: >-
+  Derived from the 4xx/5xx responses declared in the three first-party OpenAPI documents. None of
+  the three uses application/problem+json, and none declares an error response BODY at all — every
+  error response carries a description string and no schema, so a client learns the failure only
+  from the status code. There is no error-code registry, no machine-readable error envelope and no
+  documented remediation text. The DS Core cloud API's errors are not publicly documented.
+envelope:
+  documented: false
+  media_type: null
+  note: no error schema is declared on any 4xx/5xx response in any of the three specs
+problems:
+- status: 400
+  title: Bad request
+  meaning: Invalid input parameters, invalid filter parameters, or invalid exposure search parameters.
+  source_operations:
+  - openapi/dentsply-sirona-intraoral-filters-openapi.yml#createImage
+  - openapi/dentsply-sirona-intraoral-filters-openapi.yml#modalityImage
+  - openapi/dentsply-sirona-intraoral-filters-openapi.yml#filterSelect
+  - openapi/dentsply-sirona-intraoral-filters-openapi.yml#filterSupreme
+  - openapi/dentsply-sirona-intraoral-filters-openapi.yml#filterAE
+  - openapi/dentsply-sirona-intraoral-modality-openapi.yml#setAcquisitionInfo
+  - openapi/dentsply-sirona-intraoral-exposure-openapi.yml#getExposures
+- status: 404
+  title: Not found
+  meaning: >-
+    Device, sensor, acquisition session, image, image resource, generator or exposure does not
+    exist. The single most common error across all three APIs (22 of 30 operations declare it).
+  source_operations:
+  - openapi/dentsply-sirona-intraoral-modality-openapi.yml#getDeviceInfo
+  - openapi/dentsply-sirona-intraoral-modality-openapi.yml#getAcquisitionSession
+  - openapi/dentsply-sirona-intraoral-filters-openapi.yml#getImage
+  - openapi/dentsply-sirona-intraoral-exposure-openapi.yml#getGenerator
+- status: 409
+  title: Device is in use
+  meaning: >-
+    The intraoral device already has an open acquisition session. Only one session may hold a
+    device at a time; close the existing session before opening another.
+  source_operations:
+  - openapi/dentsply-sirona-intraoral-modality-openapi.yml#createAcquisitionSession
+  - openapi/dentsply-sirona-intraoral-modality-openapi.yml#updateAcquisitionSession
+- status: 410
+  title: Gone — image media could not be found
+  meaning: >-
+    The image resource still exists but its media has expired or been reaped. Filter operations
+    cannot run against it; re-create the resource.
+  source_operations:
+  - openapi/dentsply-sirona-intraoral-filters-openapi.yml#unmapImage
+  - openapi/dentsply-sirona-intraoral-filters-openapi.yml#filterSelect
+  - openapi/dentsply-sirona-intraoral-filters-openapi.yml#filterSupreme
+  - openapi/dentsply-sirona-intraoral-filters-openapi.yml#filterAE
+- status: 415
+  title: Unsupported media type
+  meaning: The uploaded file is not a 16-bit grayscale PNG.
+  source_operations:
+  - openapi/dentsply-sirona-intraoral-filters-openapi.yml#createImage
+- status: 423
+  title: Locked
+  meaning: >-
+    AcquisitionInfo cannot be modified while the service is reading an exposure. Wait for the
+    acquisition status to leave the reading state and retry.
+  source_operations:
+  - openapi/dentsply-sirona-intraoral-modality-openapi.yml#setAcquisitionInfo
+- status: 500
+  title: Internal error
+  meaning: The Sensor Plugin service failed to open the acquisition session.
+  source_operations:
+  - openapi/dentsply-sirona-intraoral-modality-openapi.yml#createAcquisitionSession
+- status: 507
+  title: Insufficient storage
+  meaning: >-
+    Not enough storage is available on the workstation to hold the images an acquisition session
+    would produce.
+  source_operations:
+  - openapi/dentsply-sirona-intraoral-modality-openapi.yml#createAcquisitionSession
+gaps:
+- No application/problem+json (RFC 9457) representation on any operation.
+- No error body schema; the status code is the entire contract.
+- No stable machine-readable error codes and no documented retry/remediation guidance.

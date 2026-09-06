@@ -1,0 +1,97 @@
+generated: '2026-09-06'
+method: derived
+source: >-
+  openapi/dentsply-sirona-intraoral-modality-openapi.yml,
+  openapi/dentsply-sirona-intraoral-filters-openapi.yml,
+  openapi/dentsply-sirona-intraoral-exposure-openapi.yml,
+  well-known/dentsply-sirona-security.txt
+notes: >-
+  Standards conformance read from the contracts themselves, not from marketing prose. The headline
+  finding is a negative one and it matters for this market: three intraoral imaging APIs, and not
+  one of them references DICOM. Images move as PNG and TIFF with a bespoke JSON metadata envelope,
+  and exposure dose records use a bespoke Exposure schema rather than a DICOM Radiation Dose
+  Structured Report. A dental software vendor that already speaks DICOM needs a bespoke connector
+  for each of these three surfaces.
+standards:
+- id: openapi-3.0
+  conforms: true
+  evidence: >-
+    All three documents declare openapi 3.0.x (3.0.1, 3.0.1, 3.0.0) and parse cleanly.
+- id: rfc3339-datetime
+  conforms: true
+  evidence: >-
+    "All date time fields defined in the API specification are represented using the standard
+    Internet Date / Time Format defined in RFC 3339."
+    (https://github.com/dsimaging/io-exposure-service/blob/main/docs/Recommendations.md)
+- id: rfc7617-http-basic
+  conforms: true
+  evidence: >-
+    openapi/dentsply-sirona-intraoral-modality-openapi.yml components.securitySchemes.BasicAuth
+    (type http, scheme basic), documented at
+    https://github.com/dsimaging/dsio-modality-api/wiki/Authentication
+- id: rfc9116-security-txt
+  conforms: false
+  evidence: >-
+    A security.txt IS served at https://www.dentsplysirona.com/.well-known/security.txt, but it
+    omits the REQUIRED Expires field (RFC 9116 §2.5.5) and its Encryption URL returns 404, so the
+    document is served but non-conformant.
+- id: rfc9457-problem-details
+  conforms: false
+  evidence: >-
+    No operation in any of the three specs declares application/problem+json; no error body schema
+    is declared at all.
+- id: html5-sse
+  conforms: true
+  evidence: >-
+    subscribeDevices and subscribeAcquisitionStatus return text/event-stream
+    (openapi/dentsply-sirona-intraoral-modality-openapi.yml).
+- id: oauth2
+  conforms: false
+  evidence: No oauth2 securityScheme appears in any published contract.
+- id: oidc
+  conforms: false
+  evidence: >-
+    DS Core advertises SSO user provisioning for DSO customers, but no OIDC discovery document is
+    served on any host probed (see well-known/dentsply-sirona-well-known.yml) and no OIDC
+    contract is public.
+- id: scim
+  conforms: false
+  evidence: >-
+    DS Core markets "Single Sign-On user provisioning" for DSO enterprise customers. No SCIM schema
+    URN (urn:ietf:params:scim:schemas:*) appears in any public contract, and the DS Core reference
+    is behind a partner login, so SCIM cannot be confirmed either way from public material.
+- id: idempotency
+  conforms: false
+  evidence: see conventions/dentsply-sirona-conventions.yml — idempotency.coverage is none.
+- id: pagination
+  conforms: true
+  evidence: >-
+    Offset pagination (skip/limit) with a total/skip/limit envelope on
+    openapi/dentsply-sirona-intraoral-exposure-openapi.yml#getExposures. Only one of 30 operations.
+domain_standards:
+- id: dicom
+  standard: DICOM (Digital Imaging and Communications in Medicine)
+  relevant_because: >-
+    DICOM is the interchange standard for medical imaging, including intraoral dental radiography,
+    and dental practice-management and imaging software is built around it.
+  conforms: false
+  evidence: >-
+    The string "DICOM" does not appear in any of the three published contracts. Acquired images are
+    returned as image/* (PNG, TIFF) with a first-party ImageInfo/ExposureInfo/LutInfo JSON envelope;
+    exposure dose is a first-party Exposure schema rather than a DICOM Radiation Dose SR.
+- id: hl7-v2
+  conforms: false
+  evidence: not referenced in any published contract.
+- id: fhir
+  conforms: false
+  evidence: >-
+    Not referenced in any published contract. The DS Core API description names patient data
+    synchronisation with practice-management systems, but the contract for it is not public.
+compliance_program:
+  published: false
+  note: >-
+    Dentsply Sirona publishes medical-device and ESG compliance material (FDA clearance, ISO 13485,
+    EU MDR) as a device manufacturer, but no SOC 2, ISO 27001, HIPAA or PCI attestation for its
+    cloud/API surface is publicly reachable — the linked Trust Center is a JavaScript shell that
+    renders no content. See security/dentsply-sirona-trust-center.yml. No Compliance pointer is
+    claimed.

@@ -1,0 +1,27 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for Dentsply Sirona Intraoral Exposure API
+  version: 1.0.0
+x-generated: '2026-09-06'
+x-method: generated
+x-source: https://raw.githubusercontent.com/dsimaging/io-exposure-service/main/api/intraoral-exposure-service-swagger.yaml
+extends: openapi/dentsply-sirona-intraoral-exposure-openapi.yml
+actions:
+  - target: $.info
+    update:
+      x-apievangelist-provider: Dentsply Sirona
+      x-apievangelist-slug: dentsply-sirona
+      x-apievangelist-harvested-from: https://raw.githubusercontent.com/dsimaging/io-exposure-service/main/api/intraoral-exposure-service-swagger.yaml
+      x-apievangelist-docs: https://github.com/dsimaging/io-exposure-service/blob/main/docs/Recommendations.md
+      x-apievangelist-artifacts:
+        authentication: authentication/dentsply-sirona-authentication.yml
+        conventions: conventions/dentsply-sirona-conventions.yml
+        errors: errors/dentsply-sirona-problem-types.yml
+        lifecycle: lifecycle/dentsply-sirona-lifecycle.yml
+        data-model: data-model/dentsply-sirona-data-model.yml
+        conformance: conformance/dentsply-sirona-conformance.yml
+        agentic-access: agentic-access/dentsply-sirona-agentic-access.yml
+      x-apievangelist-notes: >-
+        This overlay records API Evangelist's enhancements only. The underlying document in
+        openapi/ is the provider's own contract, saved verbatim from the dsimaging GitHub
+        organisation, and is never mutated.
