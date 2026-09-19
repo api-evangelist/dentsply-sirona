@@ -264,6 +264,8 @@ apis:
   humanURL: https://open.dscore.com/
   baseURL: https://api.dscore.com
   tags:
+  - Image
+  tags_raw:
   - Images
   properties:
   - type: OpenAPI
