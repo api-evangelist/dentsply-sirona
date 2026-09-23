@@ -1,0 +1,206 @@
+openapi: 3.2.0
+info:
+  title: Dentsply Sirona Intraoral Filters API
+  description: This API is used to apply custom filters to images acquired from the DSIO Modality API.
+  version: '1.0'
+servers:
+- url: https://localhost:43809/api/dsio/filters/v1
+  description: Default endpoint for local Sensor Plugin service
+tags:
+- name: Filters
+  description: Filters that can be applied to image resources
+paths:
+  /images/{id}/filters/unmap:
+    post:
+      tags:
+      - Filters
+      summary: Unmap image
+      operationId: unmapImage
+      description: Removes the gamma map, described by LutInfo, that was applied to the image and return the original image
+      parameters:
+      - name: id
+        in: path
+        description: Id of the image resource to process
+        required: true
+        schema:
+          type: string
+          format: text
+      responses:
+        '200':
+          description: Success
+          content:
+            image/png:
+              schema:
+                type: string
+                format: binary
+        '404':
+          description: Image resource not found
+        '410':
+          description: Gone - Image media for this resource could not be found
+  /images/{id}/filters/select:
+    post:
+      tags:
+      - Filters
+      summary: Apply Select Filter
+      operationId: filterSelect
+      description: Applies the Select Filter to the specified image resource and returns the filtered image. This filter is optimized for images acquired from Xios XG Select and CDR Elite sensors.
+      parameters:
+      - name: id
+        in: path
+        description: Id of the image resource to process
+        required: true
+        schema:
+          type: string
+          format: text
+      requestBody:
+        description: The parameters used to process the image
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SelectFilter'
+      responses:
+        '200':
+          description: Success
+          content:
+            image/png:
+              schema:
+                type: string
+                format: binary
+        '400':
+          description: Supplied filter contains invalid parameters
+        '404':
+          description: Image resource not found
+        '410':
+          description: Gone - Image media for this resource could not be found
+  /images/{id}/filters/supreme:
+    post:
+      tags:
+      - Filters
+      summary: Apply Supreme Filter
+      operationId: filterSupreme
+      description: Applies the Supreme Filter to the specified image resource and returns the filtered image.
+      parameters:
+      - name: id
+        in: path
+        description: Id of the image resource to process
+        required: true
+        schema:
+          type: string
+          format: text
+      requestBody:
+        description: The parameters used to process the image
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SupremeFilter'
+      responses:
+        '200':
+          description: Success
+          content:
+            image/png:
+              schema:
+                type: string
+                format: binary
+        '400':
+          description: Supplied filter contains invalid parameters
+        '404':
+          description: Image resource not found
+        '410':
+          description: Gone - Image media for this resource could not be found
+  /images/{id}/filters/ae:
+    post:
+      tags:
+      - Filters
+      summary: Apply AE Filter
+      operationId: filterAE
+      description: Applies the AE Filter to the specified image resource and returns the filtered image.
+      parameters:
+      - name: id
+        in: path
+        description: Id of the image resource to process
+        required: true
+        schema:
+          type: string
+          format: text
+      requestBody:
+        description: The parameters used to process the image
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AEFilter'
+      responses:
+        '200':
+          description: Success
+          content:
+            image/png:
+              schema:
+                type: string
+                format: binary
+        '400':
+          description: Supplied filter contains invalid parameters
+        '404':
+          description: Image resource not found
+        '410':
+          description: Gone - Image media for this resource could not be found
+components:
+  schemas:
+    SelectFilter:
+      description: 'Parameters used to apply the Select filter. This filter is optimized for images acquired from Xios XG Select and Schick Elite sensors.
+
+        '
+      type: object
+      properties:
+        enhancementMode:
+          description: The Select enhancement mode
+          type: string
+          enum:
+          - smooth
+          - edgeLow
+          - edgeHigh
+          - edgePro
+          example: edgePro
+    AEFilter:
+      description: 'Parameters used to apply the AE filter. This filter is optimized for images acquired from Xios AE and Schick AE sensors.
+
+        '
+      type: object
+      properties:
+        task:
+          description: The task associated with the filter
+          type: string
+          enum:
+          - general
+          - endodontic
+          - periodontic
+          - restorative
+          example: general
+        sharpness:
+          description: The sharpness to apply to the image expressed as a percentage in the range 0-100.
+          type: number
+          format: float
+          minimum: 0
+          maximum: 100
+          example: 70.0
+    SupremeFilter:
+      description: 'Parameters used to apply the Supreme filter. This filter is optimized for images acquired from Xios XG Supreme and Schick 33 sensors.
+
+        '
+      type: object
+      properties:
+        task:
+          description: The task associated with the filter
+          type: string
+          enum:
+          - general
+          - endodontic
+          - periodontic
+          - restorative
+          - hygiene
+          example: general
+        sharpness:
+          description: The sharpness to apply to the image expressed as a percentage in the range 0-100.
+          type: number
+          format: float
+          minimum: 0
+          maximum: 100
+          example: 70.0

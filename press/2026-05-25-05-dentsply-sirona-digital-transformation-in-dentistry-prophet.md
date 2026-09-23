@@ -1,7 +1,9 @@
 ---
 title: 'Dentsply Sirona: Digital Transformation in Dentistry - Prophet'
 url: https://prophet.com/case-studies/denstply-sirona-digital-transformation/
-date: '2026-05-25'
+published: ''
+date_basis: harvested
+harvested: '2026-05-25'
 query: '"Dentsply Sirona" press release artificial intelligence'
 position: 5
 source: serpapi-google

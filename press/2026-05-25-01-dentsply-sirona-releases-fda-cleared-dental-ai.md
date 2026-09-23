@@ -1,7 +1,9 @@
 ---
 title: Dentsply Sirona Releases FDA-Cleared Dental AI
 url: https://www.mpo-mag.com/breaking-news/dentsply-sirona-releases-fda-cleared-dental-ai/
-date: '2026-05-25'
+published: ''
+date_basis: harvested
+harvested: '2026-05-25'
 query: '"Dentsply Sirona" press release artificial intelligence'
 position: 1
 source: serpapi-google

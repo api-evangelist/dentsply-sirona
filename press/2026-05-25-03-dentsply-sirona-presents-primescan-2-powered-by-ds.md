@@ -1,7 +1,9 @@
 ---
 title: Dentsply Sirona presents Primescan® 2 powered by DS ...
 url: https://www.prnewswire.com/news-releases/dentsply-sirona-presents-primescan-2-powered-by-ds-core-the-first-cloud-native-intraoral-scanning-solution-302239312.html
-date: '2026-05-25'
+published: ''
+date_basis: harvested
+harvested: '2026-05-25'
 query: '"Dentsply Sirona" press release artificial intelligence'
 position: 3
 source: serpapi-google

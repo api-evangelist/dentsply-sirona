@@ -1,0 +1,95 @@
+openapi: 3.2.0
+info:
+  description: The Intraoral Exposure API provides exposure data for intraoral dental imaging applications.
+  version: '1.0'
+  title: Intraoral Exposure Generators API
+  contact:
+    email: John.Goyette@dentsplysirona.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+servers:
+- description: SwaggerHub API Auto Mocking
+  url: https://virtserver.swaggerhub.com/JohnGoyette/intraoral-exposure-service/1.0
+security:
+- ApiKeyAuth: []
+tags:
+- name: Generators
+  description: Intraoral X-ray tube generators
+paths:
+  /generator:
+    get:
+      tags:
+      - Generators
+      summary: retrieve all generators
+      operationId: getAllGenerators
+      description: Retrieves a list of all available Intraoral X-ray Tube Generators
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Generator'
+  /generator/{id}:
+    get:
+      tags:
+      - Generators
+      summary: retrieve a generator
+      operationId: getGenerator
+      description: Retrieves information about an Intraoral X-ray Tube Generator
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: The Id of the generator
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Generator'
+        '404':
+          description: Generator not found
+components:
+  schemas:
+    Generator:
+      type: object
+      required:
+      - id
+      - name
+      - manufacturer
+      - model
+      - serialNumber
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+          description: Unique Id assigned to this generator
+        name:
+          type: string
+          example: Operatory 1
+          description: A friendly name used to refer this generator
+        manufacturer:
+          type: string
+          example: Dentsply Sirona
+          description: Manufacturer of the generator
+        model:
+          type: string
+          example: Heliodent
+          description: Model name of the generator
+        serialNumber:
+          type: string
+          example: HS-123456789
+          description: Serial number of the generator
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key

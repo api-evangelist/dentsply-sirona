@@ -1,0 +1,37 @@
+{
+  "provider": "dentsply-sirona",
+  "sources": [
+    "_original/dentsply-sirona-intraoral-exposure-openapi.yml",
+    "_original/dentsply-sirona-intraoral-filters-openapi.yml",
+    "_original/dentsply-sirona-intraoral-modality-openapi.yml"
+  ],
+  "outputs": [
+    "dentsply-sirona-exposures-api-openapi.yml",
+    "dentsply-sirona-generators-api-openapi.yml",
+    "dentsply-sirona-filters-api-openapi.yml",
+    "dentsply-sirona-images-api-openapi.yml",
+    "dentsply-sirona-devices-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [
+    "3 archived document(s) dropped as subsets of other archived documents",
+    "sourced from openapi/_original/ (3 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "dentsply-sirona-intraoral-exposure-openapi.yml: upgraded openapi 3.0.0 -> OpenAPI 3.2.0",
+    "dentsply-sirona-intraoral-filters-openapi.yml: upgraded openapi 3.0.1 -> OpenAPI 3.2.0",
+    "dentsply-sirona-intraoral-modality-openapi.yml: upgraded openapi 3.0.1 -> OpenAPI 3.2.0",
+    "tag 'Images' spans 2 source specs (dentsply-sirona-intraoral-filters-openapi.yml, dentsply-sirona-intraoral-modality-openapi.yml): per-path servers applied",
+    "apis.yml register: already-registered"
+  ],
+  "skipped": [
+    "_original/intraoral-exposure-service-swagger.yaml: archived document superseded by a larger archived document",
+    "_original/ds-io-modality-swagger.yaml: archived document superseded by a larger archived document",
+    "_original/ds-io-filters-swagger.yaml: archived document superseded by a larger archived document",
+    "dentsply-sirona-devices-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "dentsply-sirona-exposures-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "dentsply-sirona-filters-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "dentsply-sirona-generators-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "dentsply-sirona-images-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
+}
