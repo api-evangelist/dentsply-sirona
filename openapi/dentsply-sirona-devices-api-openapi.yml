@@ -124,35 +124,22 @@ paths:
           description: Device not found
 components:
   schemas:
-    BatteryInfo:
-      description: Contains information about the current state of the battery in the device if applicable.
+    DeviceEventData:
+      description: Describes changes to the list of devices including added, removed and changed devices. A device may change if a different sensor is connected causing the name and icon to be modified or when a device is used for a session causing the status to be modified.
       type: object
       properties:
-        hasBattery:
-          description: Flag indicating if the device is battery powered
-          type: boolean
-          example: true
-        percentRemaining:
-          description: A number in the range 0-100 indicating the percentage of battery power remaining
-          type: number
-          format: float
-          example: 78.0
-        level:
-          description: "A coarse description of the battery power level. May be used to update a color scheme in the user interface \n  * `Low` - The battery is low and should be recharged\n  * `Good` - The battery level is sufficient\n  * `Full` - The battery was recently recharged\n"
-          type: string
-          enum:
-          - Low
-          - Good
-          - Full
-          example: Good
-    Heartbeat:
-      description: Contains the timeout interval for a heartbeat message sent to subscribed clients.
-      type: object
-      properties:
-        heartbeatTimeout:
-          description: The heartbeat timeout interval in ms.
-          type: number
-          example: 1000
+        data:
+          type: object
+          properties:
+            action:
+              type: string
+              enum:
+              - added
+              - removed
+              - changed
+              example: changed
+            deviceInfo:
+              $ref: '#/components/schemas/DeviceInfo'
     SensorInfo:
       description: Detailed information about an intraoral sensor.
       type: object
@@ -196,6 +183,44 @@ components:
           description: Version of software running on the sensor
           type: string
           example: 0.15
+    BatteryInfo:
+      description: Contains information about the current state of the battery in the device if applicable.
+      type: object
+      properties:
+        hasBattery:
+          description: Flag indicating if the device is battery powered
+          type: boolean
+          example: true
+        percentRemaining:
+          description: A number in the range 0-100 indicating the percentage of battery power remaining
+          type: number
+          format: float
+          example: 78.0
+        level:
+          description: "A coarse description of the battery power level. May be used to update a color scheme in the user interface \n  * `Low` - The battery is low and should be recharged\n  * `Good` - The battery level is sufficient\n  * `Full` - The battery was recently recharged\n"
+          type: string
+          enum:
+          - Low
+          - Good
+          - Full
+          example: Good
+    DeviceStatus:
+      description: "Describes the current status of the device:\n  * `Available` - Device is available for an acquisition\n  * `InUse` - Device is currently being used for an acquisition\n  * `Unavailable` - Device is not available at this time\n  * `Error` Device encountered an unspecified error\n  \n  The current status must be `Available` in order to use it for an acquisition. If the device status returns `InUse`, it indicates that the device is currently being used for an acquisition.\n"
+      type: string
+      enum:
+      - Available
+      - InUse
+      - Unavailable
+      - Error
+      example: Available
+    Heartbeat:
+      description: Contains the timeout interval for a heartbeat message sent to subscribed clients.
+      type: object
+      properties:
+        heartbeatTimeout:
+          description: The heartbeat timeout interval in ms.
+          type: number
+          example: 1000
     DeviceInfo:
       description: Detailed information about an intraoral device (sensor interface)
       type: object
@@ -235,31 +260,6 @@ components:
           example: 1.2
         battery:
           $ref: '#/components/schemas/BatteryInfo'
-    DeviceStatus:
-      description: "Describes the current status of the device:\n  * `Available` - Device is available for an acquisition\n  * `InUse` - Device is currently being used for an acquisition\n  * `Unavailable` - Device is not available at this time\n  * `Error` Device encountered an unspecified error\n  \n  The current status must be `Available` in order to use it for an acquisition. If the device status returns `InUse`, it indicates that the device is currently being used for an acquisition.\n"
-      type: string
-      enum:
-      - Available
-      - InUse
-      - Unavailable
-      - Error
-      example: Available
-    DeviceEventData:
-      description: Describes changes to the list of devices including added, removed and changed devices. A device may change if a different sensor is connected causing the name and icon to be modified or when a device is used for a session causing the status to be modified.
-      type: object
-      properties:
-        data:
-          type: object
-          properties:
-            action:
-              type: string
-              enum:
-              - added
-              - removed
-              - changed
-              example: changed
-            deviceInfo:
-              $ref: '#/components/schemas/DeviceInfo'
   securitySchemes:
     BasicAuth:
       type: http

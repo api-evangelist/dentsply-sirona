@@ -486,7 +486,7 @@ paths:
     get:
       tags:
       - Images
-      operationId: getImage
+      operationId: getAcquisitionBySessionIdImagesByImageId
       summary: Get Image
       description: Returns information about the specified image
       parameters:
@@ -513,6 +513,8 @@ paths:
           description: Session or image not found
       security:
       - BasicAuth: []
+      x-operation-id-source: normalized
+      x-operation-id-original: getImage
     servers:
     - url: https://localhost:43809/api/dsio/modality/v1
       description: Default endpoint for local Sensor Plugin service
@@ -520,7 +522,7 @@ paths:
     get:
       tags:
       - Images
-      operationId: getImageMedia
+      operationId: getAcquisitionBySessionIdImagesByImageIdMedia
       summary: Get Image Media
       description: Returns the media representing the specified image
       parameters:
@@ -548,6 +550,8 @@ paths:
           description: Session or image not found
       security:
       - BasicAuth: []
+      x-operation-id-source: normalized
+      x-operation-id-original: getImageMedia
     servers:
     - url: https://localhost:43809/api/dsio/modality/v1
       description: Default endpoint for local Sensor Plugin service
@@ -689,6 +693,79 @@ components:
               type: number
               format: integer
               example: 418
+    AcquisitionSessionInfo:
+      description: Information used to create or update an acquisition session
+      type: object
+      properties:
+        deviceId:
+          description: Unique Id of the device
+          type: string
+          example: bc91c079-dabe-0170-1c5e-6ee92b3f4a35
+        clientName:
+          description: A client provided string used to identify the client that created the session
+          type: string
+          example: OP4 Workstation
+        context:
+          description: An arbitrary object that can be used to store custom information about an acquisition session.
+          type: object
+          additionalProperties: {}
+    Heartbeat:
+      description: Contains the timeout interval for a heartbeat message sent to subscribed clients.
+      type: object
+      properties:
+        heartbeatTimeout:
+          description: The heartbeat timeout interval in ms.
+          type: number
+          example: 1000
+    LutInfo:
+      description: "Describes the lookup table (LUT) mapping applied to an image. Images acquired by this service may be mapped using a non-linear LUT in order to provide an image suitable for presentation (see the `applyLut` property of `AcquisitionInfo`). The LUT is created according to the following equation:\n\n  Y = m(x&prime;<sup>&gamma;</sup>) + b\n  \n  where\n  * m is the slope\n  * b is the offset\n  * &gamma; is the gamma value\n  * x&prime; is a normalized pixel scaled to the range [0,1]\n\nIf desired, the original pixel data (X) can be recovered from the mapped pixel (Y) using the LutInfo:\n  \n  X = (X<sub>max</sub> - X<sub>min</sub>) * [(Y - b) / m]<sup>1/&gamma;</sup> + X<sub>min</sub>\n  \n  where\n  * m is the slope\n  * b is the offset\n  * &gamma; is the gamma value\n  * X<sub>min</sub> is the minimum gray value\n  * X<sub>max</sub> is the maximum gray value\n\nIt is typical for the minimum gray value to be larger than the maximum gray level. This way, the LUT mapping produces an inverted non-linear optimized image.\n"
+      type: object
+      properties:
+        gamma:
+          description: Gamma value used in map
+          type: number
+          format: double
+          example: 2.3
+        slope:
+          description: Slope value used in map
+          type: number
+          format: double
+          example: 65535.0
+        offset:
+          description: Offset value used in map
+          type: number
+          format: double
+          example: 0.0
+        totalGrays:
+          description: Total number of gray values in original (unmapped) image
+          type: number
+          format: integer
+          example: 4096
+        minimumGray:
+          description: Minimum gray value in original (unmapped) image
+          type: number
+          format: integer
+          example: 3612
+        maximumGray:
+          description: Maximum gray value in original (unmapped) image
+          type: number
+          format: integer
+          example: 418
+    HashInfo:
+      description: A hash used to verify integrity of pixel data.
+      type: object
+      properties:
+        alg:
+          description: Algorithm used to compute the hash.
+          type: string
+          enum:
+          - MD5
+          - SHA256
+          example: MD5
+        hash:
+          description: The hash value
+          type: string
+          example: 536c36b632ea8256a50ec6396d4e7ea3
     AcquisitionSession:
       description: Information about an active acquisition session. This object is similar to AcquisitionSessionInfo, but with the addition of the session Id.
       type: object
@@ -714,35 +791,6 @@ components:
           description: An arbitrary object that can be used to store custom information about an acquisition session.
           type: object
           additionalProperties: {}
-    BatteryInfo:
-      description: Contains information about the current state of the battery in the device if applicable.
-      type: object
-      properties:
-        hasBattery:
-          description: Flag indicating if the device is battery powered
-          type: boolean
-          example: true
-        percentRemaining:
-          description: A number in the range 0-100 indicating the percentage of battery power remaining
-          type: number
-          format: float
-          example: 78.0
-        level:
-          description: "A coarse description of the battery power level. May be used to update a color scheme in the user interface \n  * `Low` - The battery is low and should be recharged\n  * `Good` - The battery level is sufficient\n  * `Full` - The battery was recently recharged\n"
-          type: string
-          enum:
-          - Low
-          - Good
-          - Full
-          example: Good
-    Heartbeat:
-      description: Contains the timeout interval for a heartbeat message sent to subscribed clients.
-      type: object
-      properties:
-        heartbeatTimeout:
-          description: The heartbeat timeout interval in ms.
-          type: number
-          example: 1000
     SensorInfo:
       description: Detailed information about an intraoral sensor.
       type: object
@@ -786,6 +834,139 @@ components:
           description: Version of software running on the sensor
           type: string
           example: 0.15
+    BatteryInfo:
+      description: Contains information about the current state of the battery in the device if applicable.
+      type: object
+      properties:
+        hasBattery:
+          description: Flag indicating if the device is battery powered
+          type: boolean
+          example: true
+        percentRemaining:
+          description: A number in the range 0-100 indicating the percentage of battery power remaining
+          type: number
+          format: float
+          example: 78.0
+        level:
+          description: "A coarse description of the battery power level. May be used to update a color scheme in the user interface \n  * `Low` - The battery is low and should be recharged\n  * `Good` - The battery level is sufficient\n  * `Full` - The battery was recently recharged\n"
+          type: string
+          enum:
+          - Low
+          - Good
+          - Full
+          example: Good
+    ExposureInfo:
+      description: Describes the quality of the exposure. The optimal range is defined by [`low`, `high`], with an optimal exposure value defined by `optimal` If the exposure `value` is higher than the optimal range, the user could reduce the x-ray exposure to improve image quality. Likewise, if the value is lower than the optimal range, the user could increase the x-ray exposure to improve image quality.
+      type: object
+      properties:
+        min:
+          description: The minimum value of the exposure scale
+          type: number
+          format: double
+          example: -1.0
+        max:
+          description: The maximum value of the exposure scale
+          type: number
+          format: double
+          example: 1.0
+        low:
+          description: The low end of the optimal exposure range
+          type: number
+          format: double
+          example: -0.5
+        high:
+          description: The high end of the optimal exposure range
+          type: number
+          format: double
+          example: 0.5
+        optimum:
+          description: The optimal value for a good exposure in the range [low, high]
+          type: number
+          format: double
+          example: 0.0
+        value:
+          description: The measured exposure value.
+          type: number
+          format: double
+          example: -0.24723
+    AcquisitionStatus:
+      description: Describes the state of the current exposure
+      type: object
+      properties:
+        ready:
+          description: Indicates exposure readiness of the sensor. Use this property to update the user with information regarding exposure readiness.
+          type: boolean
+          example: true
+        state:
+          description: "The state of the current exposure. For a typical exposure, the acquisition state property will start with `NoAcquisitionInfo`. Once the client has supplied AcquisitionInfo with `enable` set to true and the sensor is ready to acquire, the state will transition to `Ready`. When the user exposes the sensor, the state will automatically transition to `Reading`, followed by `Processing`, `Storing`, `NewImage` and finally return to `NoAcquisitionInfo` as it prepares for the next exposure. \n\n  The state property will contain one of the following values:\n  * `Error` - An error has occurred and acquisition is unavailable.\n  * `LowBattery` - A warning that the device does not have enough power to continue. The device must be recharged.\n  * `InsufficientStorage` - There is not enough space available to store the next exposure\n  * `NoHardware` - The device has been lost or is no longer connected\n  * `NoSensor` - There is no sensor connected to the device\n  * `Initializing` - The device is initializing the sensor and preparing for an exposure\n  * `NoAcquisitionInfo` - AcquisitionInfo has not been sent yet. The client must send AcquisitionInfo prior to each exposure.\n  * `Ready` - The device is ready for an exposure. Note that the device may be ready, but the client has disabled acquisition. In this case, the ready property above would be false.\n  * `Reading` - An exposure occurred and the sensor is being read.\n  * `Processing` - The device is processing image data received from the sensor\n  * `Storing` - The device is storing image data\n  * `NewImage` - Indicates that an exposure just completed and a new image is available.\n"
+          type: string
+          enum:
+          - Error
+          - LowBattery
+          - InsufficientStorage
+          - NoHardware
+          - NoSensor
+          - Initializing
+          - NoAcquisitionInfo
+          - Ready
+          - Reading
+          - Processing
+          - Storing
+          - NewImage
+          example: Ready
+        lastImageId:
+          description: The id of the most recent image acquired. This property will be updated when an image is acquired and the state transitions to `NewImage`.
+          type: string
+          example: 04d2b36f-3613-4c29-b130-923c93a6187f
+        totalImages:
+          description: The total number of images acquired so far in this session. This property will be updated when an image is acquired and the state transitions to `NewImage`.
+          type: number
+          example: 4
+    AcquisitionInfo:
+      description: Provides information regarding an acquisition. AcquisitionInfo must be provided prior to each exposure.
+      type: object
+      properties:
+        enable:
+          description: Enable or disable the current acquisition. Note that a client may enable acquisition, but the device may not be ready or able to perform an acquisition (i.e., no sensor connected). See `AcquisitionStatus` to determine exposure readiness.
+          type: boolean
+          example: true
+        rotation:
+          description: "Amount in degrees that the sensor is rotated in a clockwise direction with respect to the neutral position (cable exits south) as viewed from the perspective of the x-ray source. The device will rotate an acquired image accordingly based on this value.\n\n  Here are some examples:\n\n  1. An anterior PA of the patient's maxilla should set this value to 0 (sensor is in the neutral position).\n  1. A bitewing on the patient's left side should set this value to 90.\n  1. An anterior PA of the patient's mandible should set this value to 180 (sensor is *upside down*).\n  1. A bitewing on the patient's right side should set this value to 270.\n  \n  A value of null may be used for this property which indicates no rotation is applied (effectively the same as 0). In cases where null is supplied for an update API, the current value of rotation will not be changed.\n"
+          type:
+          - number
+          - 'null'
+          enum:
+          - 0
+          - 90
+          - 180
+          - 270
+          example: 90
+        binning:
+          description: "The binning mode used to acquire the image. When binning mode is set to Binned2x2, the sensor combines 4 pixels in a 2x2 neighborhood to create a single pixel. The resulting image is 1/4th the size of an Unbinned image, but with lower resolution. Note that some sensors may not support binning, in which case the binning property cannot be changed.\n\n  A value of null may be used for this property which indicates that the service will use the default binning mode for the attached sensor. In cases where null is supplied for an update API, the current value of binning will not be changed.\n"
+          type:
+          - string
+          - 'null'
+          enum:
+          - Unbinned
+          - Binned2x2
+          example: Unbinned
+        applyLut:
+          description: Flag to indicate if a dynamic gamma map should be applied to the image to optimize contrast. When this value is true, the image will be enhanced with a nonlinear map described by `LutInfo`.
+          type: boolean
+          example: true
+        context:
+          description: An arbitrary object that can be used to store custom information about an acquisition. This data will be available in the `ImageInfo.acquisitionInfo` property of the resulting image.
+          type: object
+          additionalProperties: {}
+    DeviceStatus:
+      description: "Describes the current status of the device:\n  * `Available` - Device is available for an acquisition\n  * `InUse` - Device is currently being used for an acquisition\n  * `Unavailable` - Device is not available at this time\n  * `Error` Device encountered an unspecified error\n  \n  The current status must be `Available` in order to use it for an acquisition. If the device status returns `InUse`, it indicates that the device is currently being used for an acquisition.\n"
+      type: string
+      enum:
+      - Available
+      - InUse
+      - Unavailable
+      - Error
+      example: Available
     ImageInfo_2:
       description: Provides detailed information about acquired images, including the format of the image data and URLs that can be used to retrieve image data. The device does not perform any enhancements or processing of the image, however, it may apply a contrast map to the image so that the image delivered is suitable for display. The contrast map is a nonlinear reversible gamma map and it is described in the `LutInfo` property.
       type: object
@@ -851,21 +1032,6 @@ components:
           $ref: '#/components/schemas/LutInfo'
         exposureInfo:
           $ref: '#/components/schemas/ExposureInfo'
-    HashInfo:
-      description: A hash used to verify integrity of pixel data.
-      type: object
-      properties:
-        alg:
-          description: Algorithm used to compute the hash.
-          type: string
-          enum:
-          - MD5
-          - SHA256
-          example: MD5
-        hash:
-          description: The hash value
-          type: string
-          example: 536c36b632ea8256a50ec6396d4e7ea3
     DeviceInfo:
       description: Detailed information about an intraoral device (sensor interface)
       type: object
@@ -905,168 +1071,6 @@ components:
           example: 1.2
         battery:
           $ref: '#/components/schemas/BatteryInfo'
-    AcquisitionInfo:
-      description: Provides information regarding an acquisition. AcquisitionInfo must be provided prior to each exposure.
-      type: object
-      properties:
-        enable:
-          description: Enable or disable the current acquisition. Note that a client may enable acquisition, but the device may not be ready or able to perform an acquisition (i.e., no sensor connected). See `AcquisitionStatus` to determine exposure readiness.
-          type: boolean
-          example: true
-        rotation:
-          description: "Amount in degrees that the sensor is rotated in a clockwise direction with respect to the neutral position (cable exits south) as viewed from the perspective of the x-ray source. The device will rotate an acquired image accordingly based on this value.\n\n  Here are some examples:\n\n  1. An anterior PA of the patient's maxilla should set this value to 0 (sensor is in the neutral position).\n  1. A bitewing on the patient's left side should set this value to 90.\n  1. An anterior PA of the patient's mandible should set this value to 180 (sensor is *upside down*).\n  1. A bitewing on the patient's right side should set this value to 270.\n  \n  A value of null may be used for this property which indicates no rotation is applied (effectively the same as 0). In cases where null is supplied for an update API, the current value of rotation will not be changed.\n"
-          type:
-          - number
-          - 'null'
-          enum:
-          - 0
-          - 90
-          - 180
-          - 270
-          example: 90
-        binning:
-          description: "The binning mode used to acquire the image. When binning mode is set to Binned2x2, the sensor combines 4 pixels in a 2x2 neighborhood to create a single pixel. The resulting image is 1/4th the size of an Unbinned image, but with lower resolution. Note that some sensors may not support binning, in which case the binning property cannot be changed.\n\n  A value of null may be used for this property which indicates that the service will use the default binning mode for the attached sensor. In cases where null is supplied for an update API, the current value of binning will not be changed.\n"
-          type:
-          - string
-          - 'null'
-          enum:
-          - Unbinned
-          - Binned2x2
-          example: Unbinned
-        applyLut:
-          description: Flag to indicate if a dynamic gamma map should be applied to the image to optimize contrast. When this value is true, the image will be enhanced with a nonlinear map described by `LutInfo`.
-          type: boolean
-          example: true
-        context:
-          description: An arbitrary object that can be used to store custom information about an acquisition. This data will be available in the `ImageInfo.acquisitionInfo` property of the resulting image.
-          type: object
-          additionalProperties: {}
-    AcquisitionStatus:
-      description: Describes the state of the current exposure
-      type: object
-      properties:
-        ready:
-          description: Indicates exposure readiness of the sensor. Use this property to update the user with information regarding exposure readiness.
-          type: boolean
-          example: true
-        state:
-          description: "The state of the current exposure. For a typical exposure, the acquisition state property will start with `NoAcquisitionInfo`. Once the client has supplied AcquisitionInfo with `enable` set to true and the sensor is ready to acquire, the state will transition to `Ready`. When the user exposes the sensor, the state will automatically transition to `Reading`, followed by `Processing`, `Storing`, `NewImage` and finally return to `NoAcquisitionInfo` as it prepares for the next exposure. \n\n  The state property will contain one of the following values:\n  * `Error` - An error has occurred and acquisition is unavailable.\n  * `LowBattery` - A warning that the device does not have enough power to continue. The device must be recharged.\n  * `InsufficientStorage` - There is not enough space available to store the next exposure\n  * `NoHardware` - The device has been lost or is no longer connected\n  * `NoSensor` - There is no sensor connected to the device\n  * `Initializing` - The device is initializing the sensor and preparing for an exposure\n  * `NoAcquisitionInfo` - AcquisitionInfo has not been sent yet. The client must send AcquisitionInfo prior to each exposure.\n  * `Ready` - The device is ready for an exposure. Note that the device may be ready, but the client has disabled acquisition. In this case, the ready property above would be false.\n  * `Reading` - An exposure occurred and the sensor is being read.\n  * `Processing` - The device is processing image data received from the sensor\n  * `Storing` - The device is storing image data\n  * `NewImage` - Indicates that an exposure just completed and a new image is available.\n"
-          type: string
-          enum:
-          - Error
-          - LowBattery
-          - InsufficientStorage
-          - NoHardware
-          - NoSensor
-          - Initializing
-          - NoAcquisitionInfo
-          - Ready
-          - Reading
-          - Processing
-          - Storing
-          - NewImage
-          example: Ready
-        lastImageId:
-          description: The id of the most recent image acquired. This property will be updated when an image is acquired and the state transitions to `NewImage`.
-          type: string
-          example: 04d2b36f-3613-4c29-b130-923c93a6187f
-        totalImages:
-          description: The total number of images acquired so far in this session. This property will be updated when an image is acquired and the state transitions to `NewImage`.
-          type: number
-          example: 4
-    DeviceStatus:
-      description: "Describes the current status of the device:\n  * `Available` - Device is available for an acquisition\n  * `InUse` - Device is currently being used for an acquisition\n  * `Unavailable` - Device is not available at this time\n  * `Error` Device encountered an unspecified error\n  \n  The current status must be `Available` in order to use it for an acquisition. If the device status returns `InUse`, it indicates that the device is currently being used for an acquisition.\n"
-      type: string
-      enum:
-      - Available
-      - InUse
-      - Unavailable
-      - Error
-      example: Available
-    LutInfo:
-      description: "Describes the lookup table (LUT) mapping applied to an image. Images acquired by this service may be mapped using a non-linear LUT in order to provide an image suitable for presentation (see the `applyLut` property of `AcquisitionInfo`). The LUT is created according to the following equation:\n\n  Y = m(x&prime;<sup>&gamma;</sup>) + b\n  \n  where\n  * m is the slope\n  * b is the offset\n  * &gamma; is the gamma value\n  * x&prime; is a normalized pixel scaled to the range [0,1]\n\nIf desired, the original pixel data (X) can be recovered from the mapped pixel (Y) using the LutInfo:\n  \n  X = (X<sub>max</sub> - X<sub>min</sub>) * [(Y - b) / m]<sup>1/&gamma;</sup> + X<sub>min</sub>\n  \n  where\n  * m is the slope\n  * b is the offset\n  * &gamma; is the gamma value\n  * X<sub>min</sub> is the minimum gray value\n  * X<sub>max</sub> is the maximum gray value\n\nIt is typical for the minimum gray value to be larger than the maximum gray level. This way, the LUT mapping produces an inverted non-linear optimized image.\n"
-      type: object
-      properties:
-        gamma:
-          description: Gamma value used in map
-          type: number
-          format: double
-          example: 2.3
-        slope:
-          description: Slope value used in map
-          type: number
-          format: double
-          example: 65535.0
-        offset:
-          description: Offset value used in map
-          type: number
-          format: double
-          example: 0.0
-        totalGrays:
-          description: Total number of gray values in original (unmapped) image
-          type: number
-          format: integer
-          example: 4096
-        minimumGray:
-          description: Minimum gray value in original (unmapped) image
-          type: number
-          format: integer
-          example: 3612
-        maximumGray:
-          description: Maximum gray value in original (unmapped) image
-          type: number
-          format: integer
-          example: 418
-    ExposureInfo:
-      description: Describes the quality of the exposure. The optimal range is defined by [`low`, `high`], with an optimal exposure value defined by `optimal` If the exposure `value` is higher than the optimal range, the user could reduce the x-ray exposure to improve image quality. Likewise, if the value is lower than the optimal range, the user could increase the x-ray exposure to improve image quality.
-      type: object
-      properties:
-        min:
-          description: The minimum value of the exposure scale
-          type: number
-          format: double
-          example: -1.0
-        max:
-          description: The maximum value of the exposure scale
-          type: number
-          format: double
-          example: 1.0
-        low:
-          description: The low end of the optimal exposure range
-          type: number
-          format: double
-          example: -0.5
-        high:
-          description: The high end of the optimal exposure range
-          type: number
-          format: double
-          example: 0.5
-        optimum:
-          description: The optimal value for a good exposure in the range [low, high]
-          type: number
-          format: double
-          example: 0.0
-        value:
-          description: The measured exposure value.
-          type: number
-          format: double
-          example: -0.24723
-    AcquisitionSessionInfo:
-      description: Information used to create or update an acquisition session
-      type: object
-      properties:
-        deviceId:
-          description: Unique Id of the device
-          type: string
-          example: bc91c079-dabe-0170-1c5e-6ee92b3f4a35
-        clientName:
-          description: A client provided string used to identify the client that created the session
-          type: string
-          example: OP4 Workstation
-        context:
-          description: An arbitrary object that can be used to store custom information about an acquisition session.
-          type: object
-          additionalProperties: {}
   securitySchemes:
     BasicAuth:
       type: http
