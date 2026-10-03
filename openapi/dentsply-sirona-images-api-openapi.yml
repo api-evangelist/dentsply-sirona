@@ -693,22 +693,45 @@ components:
               type: number
               format: integer
               example: 418
-    AcquisitionSessionInfo:
-      description: Information used to create or update an acquisition session
+    DeviceInfo:
+      description: Detailed information about an intraoral device (sensor interface)
       type: object
       properties:
         deviceId:
           description: Unique Id of the device
           type: string
           example: bc91c079-dabe-0170-1c5e-6ee92b3f4a35
-        clientName:
-          description: A client provided string used to identify the client that created the session
+        name:
+          description: Descriptive name of the device
           type: string
-          example: OP4 Workstation
-        context:
-          description: An arbitrary object that can be used to store custom information about an acquisition session.
-          type: object
-          additionalProperties: {}
+          example: 'Schick 33: 213402981'
+        iconUrl:
+          description: Url for an icon representing the device
+          type: string
+          example: http://example.com/api/devices/bc91c079-dabe-0170-1c5e-6ee92b3f4a35/icon.png
+        hasSensor:
+          description: Flag indicating if a sensor is connected to this device
+          type: boolean
+        status:
+          $ref: '#/components/schemas/DeviceStatus'
+        interfaceType:
+          description: The interface used to connect the device to the system. For example, a USB device may report *usb*, while a network based device may report *network*.
+          type: string
+          example: usb
+        modelName:
+          description: Manufacturer's model name
+          type: string
+          example: Schick AE USB Interface
+        serialNumber:
+          description: Serial number of the device
+          type: string
+          example: 34-05921813233
+        version:
+          description: Version of software running on the device
+          type: string
+          example: 1.2
+        battery:
+          $ref: '#/components/schemas/BatteryInfo'
     Heartbeat:
       description: Contains the timeout interval for a heartbeat message sent to subscribed clients.
       type: object
@@ -717,55 +740,6 @@ components:
           description: The heartbeat timeout interval in ms.
           type: number
           example: 1000
-    LutInfo:
-      description: "Describes the lookup table (LUT) mapping applied to an image. Images acquired by this service may be mapped using a non-linear LUT in order to provide an image suitable for presentation (see the `applyLut` property of `AcquisitionInfo`). The LUT is created according to the following equation:\n\n  Y = m(x&prime;<sup>&gamma;</sup>) + b\n  \n  where\n  * m is the slope\n  * b is the offset\n  * &gamma; is the gamma value\n  * x&prime; is a normalized pixel scaled to the range [0,1]\n\nIf desired, the original pixel data (X) can be recovered from the mapped pixel (Y) using the LutInfo:\n  \n  X = (X<sub>max</sub> - X<sub>min</sub>) * [(Y - b) / m]<sup>1/&gamma;</sup> + X<sub>min</sub>\n  \n  where\n  * m is the slope\n  * b is the offset\n  * &gamma; is the gamma value\n  * X<sub>min</sub> is the minimum gray value\n  * X<sub>max</sub> is the maximum gray value\n\nIt is typical for the minimum gray value to be larger than the maximum gray level. This way, the LUT mapping produces an inverted non-linear optimized image.\n"
-      type: object
-      properties:
-        gamma:
-          description: Gamma value used in map
-          type: number
-          format: double
-          example: 2.3
-        slope:
-          description: Slope value used in map
-          type: number
-          format: double
-          example: 65535.0
-        offset:
-          description: Offset value used in map
-          type: number
-          format: double
-          example: 0.0
-        totalGrays:
-          description: Total number of gray values in original (unmapped) image
-          type: number
-          format: integer
-          example: 4096
-        minimumGray:
-          description: Minimum gray value in original (unmapped) image
-          type: number
-          format: integer
-          example: 3612
-        maximumGray:
-          description: Maximum gray value in original (unmapped) image
-          type: number
-          format: integer
-          example: 418
-    HashInfo:
-      description: A hash used to verify integrity of pixel data.
-      type: object
-      properties:
-        alg:
-          description: Algorithm used to compute the hash.
-          type: string
-          enum:
-          - MD5
-          - SHA256
-          example: MD5
-        hash:
-          description: The hash value
-          type: string
-          example: 536c36b632ea8256a50ec6396d4e7ea3
     AcquisitionSession:
       description: Information about an active acquisition session. This object is similar to AcquisitionSessionInfo, but with the addition of the session Id.
       type: object
@@ -791,104 +765,6 @@ components:
           description: An arbitrary object that can be used to store custom information about an acquisition session.
           type: object
           additionalProperties: {}
-    SensorInfo:
-      description: Detailed information about an intraoral sensor.
-      type: object
-      properties:
-        modelName:
-          description: Manufacturer's model name of the sensor
-          type: string
-          example: Schick 33
-        serialNumber:
-          description: Serial number of sensor
-          type: string
-          example: 213402981
-        brand:
-          description: Branding information of sensor
-          type: string
-          example: Schick
-        family:
-          description: Product family of sensor
-          type: string
-          example: Supreme
-        size:
-          description: Sensor size
-          type: number
-          enum:
-          - 0
-          - 1
-          - 2
-          example: 2
-        width:
-          description: Width of sensor in pixels
-          type: number
-          example: 2400
-        height:
-          description: Height of sensor in pixels
-          type: number
-          example: 1708
-        supportsBinning:
-          description: Flag indicating if the sensor supports Binning (see `AcquisitionInfo`)
-          type: boolean
-        version:
-          description: Version of software running on the sensor
-          type: string
-          example: 0.15
-    BatteryInfo:
-      description: Contains information about the current state of the battery in the device if applicable.
-      type: object
-      properties:
-        hasBattery:
-          description: Flag indicating if the device is battery powered
-          type: boolean
-          example: true
-        percentRemaining:
-          description: A number in the range 0-100 indicating the percentage of battery power remaining
-          type: number
-          format: float
-          example: 78.0
-        level:
-          description: "A coarse description of the battery power level. May be used to update a color scheme in the user interface \n  * `Low` - The battery is low and should be recharged\n  * `Good` - The battery level is sufficient\n  * `Full` - The battery was recently recharged\n"
-          type: string
-          enum:
-          - Low
-          - Good
-          - Full
-          example: Good
-    ExposureInfo:
-      description: Describes the quality of the exposure. The optimal range is defined by [`low`, `high`], with an optimal exposure value defined by `optimal` If the exposure `value` is higher than the optimal range, the user could reduce the x-ray exposure to improve image quality. Likewise, if the value is lower than the optimal range, the user could increase the x-ray exposure to improve image quality.
-      type: object
-      properties:
-        min:
-          description: The minimum value of the exposure scale
-          type: number
-          format: double
-          example: -1.0
-        max:
-          description: The maximum value of the exposure scale
-          type: number
-          format: double
-          example: 1.0
-        low:
-          description: The low end of the optimal exposure range
-          type: number
-          format: double
-          example: -0.5
-        high:
-          description: The high end of the optimal exposure range
-          type: number
-          format: double
-          example: 0.5
-        optimum:
-          description: The optimal value for a good exposure in the range [low, high]
-          type: number
-          format: double
-          example: 0.0
-        value:
-          description: The measured exposure value.
-          type: number
-          format: double
-          example: -0.24723
     AcquisitionStatus:
       description: Describes the state of the current exposure
       type: object
@@ -967,6 +843,169 @@ components:
       - Unavailable
       - Error
       example: Available
+    ExposureInfo:
+      description: Describes the quality of the exposure. The optimal range is defined by [`low`, `high`], with an optimal exposure value defined by `optimal` If the exposure `value` is higher than the optimal range, the user could reduce the x-ray exposure to improve image quality. Likewise, if the value is lower than the optimal range, the user could increase the x-ray exposure to improve image quality.
+      type: object
+      properties:
+        min:
+          description: The minimum value of the exposure scale
+          type: number
+          format: double
+          example: -1.0
+        max:
+          description: The maximum value of the exposure scale
+          type: number
+          format: double
+          example: 1.0
+        low:
+          description: The low end of the optimal exposure range
+          type: number
+          format: double
+          example: -0.5
+        high:
+          description: The high end of the optimal exposure range
+          type: number
+          format: double
+          example: 0.5
+        optimum:
+          description: The optimal value for a good exposure in the range [low, high]
+          type: number
+          format: double
+          example: 0.0
+        value:
+          description: The measured exposure value.
+          type: number
+          format: double
+          example: -0.24723
+    HashInfo:
+      description: A hash used to verify integrity of pixel data.
+      type: object
+      properties:
+        alg:
+          description: Algorithm used to compute the hash.
+          type: string
+          enum:
+          - MD5
+          - SHA256
+          example: MD5
+        hash:
+          description: The hash value
+          type: string
+          example: 536c36b632ea8256a50ec6396d4e7ea3
+    AcquisitionSessionInfo:
+      description: Information used to create or update an acquisition session
+      type: object
+      properties:
+        deviceId:
+          description: Unique Id of the device
+          type: string
+          example: bc91c079-dabe-0170-1c5e-6ee92b3f4a35
+        clientName:
+          description: A client provided string used to identify the client that created the session
+          type: string
+          example: OP4 Workstation
+        context:
+          description: An arbitrary object that can be used to store custom information about an acquisition session.
+          type: object
+          additionalProperties: {}
+    SensorInfo:
+      description: Detailed information about an intraoral sensor.
+      type: object
+      properties:
+        modelName:
+          description: Manufacturer's model name of the sensor
+          type: string
+          example: Schick 33
+        serialNumber:
+          description: Serial number of sensor
+          type: string
+          example: 213402981
+        brand:
+          description: Branding information of sensor
+          type: string
+          example: Schick
+        family:
+          description: Product family of sensor
+          type: string
+          example: Supreme
+        size:
+          description: Sensor size
+          type: number
+          enum:
+          - 0
+          - 1
+          - 2
+          example: 2
+        width:
+          description: Width of sensor in pixels
+          type: number
+          example: 2400
+        height:
+          description: Height of sensor in pixels
+          type: number
+          example: 1708
+        supportsBinning:
+          description: Flag indicating if the sensor supports Binning (see `AcquisitionInfo`)
+          type: boolean
+        version:
+          description: Version of software running on the sensor
+          type: string
+          example: 0.15
+    BatteryInfo:
+      description: Contains information about the current state of the battery in the device if applicable.
+      type: object
+      properties:
+        hasBattery:
+          description: Flag indicating if the device is battery powered
+          type: boolean
+          example: true
+        percentRemaining:
+          description: A number in the range 0-100 indicating the percentage of battery power remaining
+          type: number
+          format: float
+          example: 78.0
+        level:
+          description: "A coarse description of the battery power level. May be used to update a color scheme in the user interface \n  * `Low` - The battery is low and should be recharged\n  * `Good` - The battery level is sufficient\n  * `Full` - The battery was recently recharged\n"
+          type: string
+          enum:
+          - Low
+          - Good
+          - Full
+          example: Good
+    LutInfo:
+      description: "Describes the lookup table (LUT) mapping applied to an image. Images acquired by this service may be mapped using a non-linear LUT in order to provide an image suitable for presentation (see the `applyLut` property of `AcquisitionInfo`). The LUT is created according to the following equation:\n\n  Y = m(x&prime;<sup>&gamma;</sup>) + b\n  \n  where\n  * m is the slope\n  * b is the offset\n  * &gamma; is the gamma value\n  * x&prime; is a normalized pixel scaled to the range [0,1]\n\nIf desired, the original pixel data (X) can be recovered from the mapped pixel (Y) using the LutInfo:\n  \n  X = (X<sub>max</sub> - X<sub>min</sub>) * [(Y - b) / m]<sup>1/&gamma;</sup> + X<sub>min</sub>\n  \n  where\n  * m is the slope\n  * b is the offset\n  * &gamma; is the gamma value\n  * X<sub>min</sub> is the minimum gray value\n  * X<sub>max</sub> is the maximum gray value\n\nIt is typical for the minimum gray value to be larger than the maximum gray level. This way, the LUT mapping produces an inverted non-linear optimized image.\n"
+      type: object
+      properties:
+        gamma:
+          description: Gamma value used in map
+          type: number
+          format: double
+          example: 2.3
+        slope:
+          description: Slope value used in map
+          type: number
+          format: double
+          example: 65535.0
+        offset:
+          description: Offset value used in map
+          type: number
+          format: double
+          example: 0.0
+        totalGrays:
+          description: Total number of gray values in original (unmapped) image
+          type: number
+          format: integer
+          example: 4096
+        minimumGray:
+          description: Minimum gray value in original (unmapped) image
+          type: number
+          format: integer
+          example: 3612
+        maximumGray:
+          description: Maximum gray value in original (unmapped) image
+          type: number
+          format: integer
+          example: 418
     ImageInfo_2:
       description: Provides detailed information about acquired images, including the format of the image data and URLs that can be used to retrieve image data. The device does not perform any enhancements or processing of the image, however, it may apply a contrast map to the image so that the image delivered is suitable for display. The contrast map is a nonlinear reversible gamma map and it is described in the `LutInfo` property.
       type: object
@@ -1032,45 +1071,6 @@ components:
           $ref: '#/components/schemas/LutInfo'
         exposureInfo:
           $ref: '#/components/schemas/ExposureInfo'
-    DeviceInfo:
-      description: Detailed information about an intraoral device (sensor interface)
-      type: object
-      properties:
-        deviceId:
-          description: Unique Id of the device
-          type: string
-          example: bc91c079-dabe-0170-1c5e-6ee92b3f4a35
-        name:
-          description: Descriptive name of the device
-          type: string
-          example: 'Schick 33: 213402981'
-        iconUrl:
-          description: Url for an icon representing the device
-          type: string
-          example: http://example.com/api/devices/bc91c079-dabe-0170-1c5e-6ee92b3f4a35/icon.png
-        hasSensor:
-          description: Flag indicating if a sensor is connected to this device
-          type: boolean
-        status:
-          $ref: '#/components/schemas/DeviceStatus'
-        interfaceType:
-          description: The interface used to connect the device to the system. For example, a USB device may report *usb*, while a network based device may report *network*.
-          type: string
-          example: usb
-        modelName:
-          description: Manufacturer's model name
-          type: string
-          example: Schick AE USB Interface
-        serialNumber:
-          description: Serial number of the device
-          type: string
-          example: 34-05921813233
-        version:
-          description: Version of software running on the device
-          type: string
-          example: 1.2
-        battery:
-          $ref: '#/components/schemas/BatteryInfo'
   securitySchemes:
     BasicAuth:
       type: http
