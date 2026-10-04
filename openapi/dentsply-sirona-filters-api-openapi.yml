@@ -144,6 +144,28 @@ paths:
           description: Gone - Image media for this resource could not be found
 components:
   schemas:
+    AEFilter:
+      description: 'Parameters used to apply the AE filter. This filter is optimized for images acquired from Xios AE and Schick AE sensors.
+
+        '
+      type: object
+      properties:
+        task:
+          description: The task associated with the filter
+          type: string
+          enum:
+          - general
+          - endodontic
+          - periodontic
+          - restorative
+          example: general
+        sharpness:
+          description: The sharpness to apply to the image expressed as a percentage in the range 0-100.
+          type: number
+          format: float
+          minimum: 0
+          maximum: 100
+          example: 70.0
     SelectFilter:
       description: 'Parameters used to apply the Select filter. This filter is optimized for images acquired from Xios XG Select and Schick Elite sensors.
 
@@ -174,28 +196,6 @@ components:
           - periodontic
           - restorative
           - hygiene
-          example: general
-        sharpness:
-          description: The sharpness to apply to the image expressed as a percentage in the range 0-100.
-          type: number
-          format: float
-          minimum: 0
-          maximum: 100
-          example: 70.0
-    AEFilter:
-      description: 'Parameters used to apply the AE filter. This filter is optimized for images acquired from Xios AE and Schick AE sensors.
-
-        '
-      type: object
-      properties:
-        task:
-          description: The task associated with the filter
-          type: string
-          enum:
-          - general
-          - endodontic
-          - periodontic
-          - restorative
           example: general
         sharpness:
           description: The sharpness to apply to the image expressed as a percentage in the range 0-100.
