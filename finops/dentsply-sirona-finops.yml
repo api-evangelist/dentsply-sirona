@@ -144,10 +144,8 @@ apis:
 unitEconomics:
   - name: Cost per Practice
     metric: ds_core_subscription_cost / practices
-    target: TBD
   - name: Cost per Modality Device
     metric: ds_core_subscription_cost / modality_devices
-    target: TBD
 maintainers:
   - FN: Kin Lane
     email: kin@apievangelist.com
