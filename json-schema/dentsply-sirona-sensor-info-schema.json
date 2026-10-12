@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/dentsply-sirona/main/json-schema/dentsply-sirona-sensor-info-schema.json",
+  "title": "SensorInfo",
+  "description": "Detailed information about an intraoral sensor.",
+  "x-generated": "2026-10-12",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/dentsply-sirona-devices-api-openapi.yml#/components/schemas/SensorInfo",
+  "type": "object",
+  "properties": {
+    "modelName": {
+      "description": "Manufacturer's model name of the sensor",
+      "type": "string"
+    },
+    "serialNumber": {
+      "description": "Serial number of sensor",
+      "type": "string"
+    },
+    "brand": {
+      "description": "Branding information of sensor",
+      "type": "string"
+    },
+    "family": {
+      "description": "Product family of sensor",
+      "type": "string"
+    },
+    "size": {
+      "description": "Sensor size",
+      "type": "number",
+      "enum": [
+        0,
+        1,
+        2
+      ]
+    },
+    "width": {
+      "description": "Width of sensor in pixels",
+      "type": "number"
+    },
+    "height": {
+      "description": "Height of sensor in pixels",
+      "type": "number"
+    },
+    "supportsBinning": {
+      "description": "Flag indicating if the sensor supports Binning (see `AcquisitionInfo`)",
+      "type": "boolean"
+    },
+    "version": {
+      "description": "Version of software running on the sensor",
+      "type": "string"
+    }
+  }
+}

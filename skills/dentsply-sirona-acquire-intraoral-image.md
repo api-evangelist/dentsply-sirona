@@ -1,5 +1,5 @@
 ---
-name: Acquire an intraoral image from a Dentsply Sirona sensor
+name: dentsply-sirona-acquire-intraoral-image
 description: >-
   Drive a Dentsply Sirona intraoral sensor through a full capture — find the device, open an
   acquisition session, arm it, watch the status stream, and retrieve the image — using the

@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/dentsply-sirona/main/json-schema/dentsply-sirona-acquisition-info-schema.json",
+  "title": "AcquisitionInfo",
+  "description": "Provides information regarding an acquisition. AcquisitionInfo must be provided prior to each exposure.",
+  "x-generated": "2026-10-12",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/dentsply-sirona-images-api-openapi.yml#/components/schemas/AcquisitionInfo",
+  "type": "object",
+  "properties": {
+    "enable": {
+      "description": "Enable or disable the current acquisition. Note that a client may enable acquisition, but the device may not be ready or able to perform an acquisition (i.e., no sensor connected). See `AcquisitionStatus` to determine exposure readiness.",
+      "type": "boolean"
+    },
+    "rotation": {
+      "description": "Amount in degrees that the sensor is rotated in a clockwise direction with respect to the neutral position (cable exits south) as viewed from the perspective of the x-ray source. The device will rotate an acquired image accordingly based on this value.\n\n  Here are some examples:\n\n  1. An anterior PA of the patient's maxilla should set this value to 0 (sensor is in the neutral position).\n  1. A bitewing on the patient's left side should set this value to 90.\n  1. An anterior PA of the patient's mandible should set this value to 180 (sensor is *upside down*).\n  1. A bitewing on the patient's right side should set this value to 270.\n  \n  A value of null may be used for this property which indicates no rotation is applied (effectively the same as 0). In cases where null is supplied for an update API, the current value of rotation will not be changed.\n",
+      "type": [
+        "number",
+        "null"
+      ],
+      "enum": [
+        0,
+        90,
+        180,
+        270
+      ]
+    },
+    "binning": {
+      "description": "The binning mode used to acquire the image. When binning mode is set to Binned2x2, the sensor combines 4 pixels in a 2x2 neighborhood to create a single pixel. The resulting image is 1/4th the size of an Unbinned image, but with lower resolution. Note that some sensors may not support binning, in which case the binning property cannot be changed.\n\n  A value of null may be used for this property which indicates that the service will use the default binning mode for the attached sensor. In cases where null is supplied for an update API, the current value of binning will not be changed.\n",
+      "type": [
+        "string",
+        "null"
+      ],
+      "enum": [
+        "Unbinned",
+        "Binned2x2"
+      ]
+    },
+    "applyLut": {
+      "description": "Flag to indicate if a dynamic gamma map should be applied to the image to optimize contrast. When this value is true, the image will be enhanced with a nonlinear map described by `LutInfo`.",
+      "type": "boolean"
+    },
+    "context": {
+      "description": "An arbitrary object that can be used to store custom information about an acquisition. This data will be available in the `ImageInfo.acquisitionInfo` property of the resulting image.",
+      "type": "object",
+      "additionalProperties": {}
+    }
+  }
+}

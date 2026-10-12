@@ -1,0 +1,343 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/dentsply-sirona/main/json-schema/dentsply-sirona-image-info-2-schema.json",
+  "title": "ImageInfo_2",
+  "description": "Provides detailed information about acquired images, including the format of the image data and URLs that can be used to retrieve image data. The device does not perform any enhancements or processing of the image, however, it may apply a contrast map to the image so that the image delivered is suitable for display. The contrast map is a nonlinear reversible gamma map and it is described in the `LutInfo` property.",
+  "x-generated": "2026-10-12",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/dentsply-sirona-images-api-openapi.yml#/components/schemas/ImageInfo_2",
+  "type": "object",
+  "properties": {
+    "id": {
+      "description": "Id of image",
+      "type": "string"
+    },
+    "createdOn": {
+      "description": "Timestamp indicating the time that the image was created.",
+      "type": "string",
+      "format": "date-time"
+    },
+    "width": {
+      "description": "Width of image in pixels",
+      "type": "number",
+      "format": "integer"
+    },
+    "height": {
+      "description": "Height of image in pixels",
+      "type": "number",
+      "format": "integer"
+    },
+    "bitsPerPixel": {
+      "description": "Number of bits used to represent each pixel",
+      "type": "number",
+      "format": "integer"
+    },
+    "bytesPerPixel": {
+      "description": "Number of bytes required to store a pixel.",
+      "type": "number",
+      "format": "integer"
+    },
+    "pixelSizeX": {
+      "description": "Horizontal length of a pixel in mm",
+      "type": "number",
+      "format": "float"
+    },
+    "pixelSizeY": {
+      "description": "Vertical length of a pixel in mm",
+      "type": "number",
+      "format": "float"
+    },
+    "previewUrl": {
+      "description": "Url of a preview (thumbnail) image. This image may be compressed and resized to a smaller dimension.",
+      "type": "string"
+    },
+    "imageUrl": {
+      "description": "Url of the image. The image returned from this url will be represented as a standard uncompressed image format, such as, PNG or TIFF.",
+      "type": "string"
+    },
+    "pixelHash": {
+      "description": "Hash of the pixel data extracted from the image available via `imageUrl`",
+      "allOf": [
+        {
+          "$ref": "#/$defs/HashInfo"
+        }
+      ]
+    },
+    "deviceInfo": {
+      "$ref": "#/$defs/DeviceInfo"
+    },
+    "sensorInfo": {
+      "$ref": "#/$defs/SensorInfo"
+    },
+    "acquisitionInfo": {
+      "$ref": "#/$defs/AcquisitionInfo"
+    },
+    "lutInfo": {
+      "$ref": "#/$defs/LutInfo"
+    },
+    "exposureInfo": {
+      "$ref": "#/$defs/ExposureInfo"
+    }
+  },
+  "$defs": {
+    "AcquisitionInfo": {
+      "description": "Provides information regarding an acquisition. AcquisitionInfo must be provided prior to each exposure.",
+      "type": "object",
+      "properties": {
+        "enable": {
+          "description": "Enable or disable the current acquisition. Note that a client may enable acquisition, but the device may not be ready or able to perform an acquisition (i.e., no sensor connected). See `AcquisitionStatus` to determine exposure readiness.",
+          "type": "boolean"
+        },
+        "rotation": {
+          "description": "Amount in degrees that the sensor is rotated in a clockwise direction with respect to the neutral position (cable exits south) as viewed from the perspective of the x-ray source. The device will rotate an acquired image accordingly based on this value.\n\n  Here are some examples:\n\n  1. An anterior PA of the patient's maxilla should set this value to 0 (sensor is in the neutral position).\n  1. A bitewing on the patient's left side should set this value to 90.\n  1. An anterior PA of the patient's mandible should set this value to 180 (sensor is *upside down*).\n  1. A bitewing on the patient's right side should set this value to 270.\n  \n  A value of null may be used for this property which indicates no rotation is applied (effectively the same as 0). In cases where null is supplied for an update API, the current value of rotation will not be changed.\n",
+          "type": [
+            "number",
+            "null"
+          ],
+          "enum": [
+            0,
+            90,
+            180,
+            270
+          ]
+        },
+        "binning": {
+          "description": "The binning mode used to acquire the image. When binning mode is set to Binned2x2, the sensor combines 4 pixels in a 2x2 neighborhood to create a single pixel. The resulting image is 1/4th the size of an Unbinned image, but with lower resolution. Note that some sensors may not support binning, in which case the binning property cannot be changed.\n\n  A value of null may be used for this property which indicates that the service will use the default binning mode for the attached sensor. In cases where null is supplied for an update API, the current value of binning will not be changed.\n",
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "Unbinned",
+            "Binned2x2"
+          ]
+        },
+        "applyLut": {
+          "description": "Flag to indicate if a dynamic gamma map should be applied to the image to optimize contrast. When this value is true, the image will be enhanced with a nonlinear map described by `LutInfo`.",
+          "type": "boolean"
+        },
+        "context": {
+          "description": "An arbitrary object that can be used to store custom information about an acquisition. This data will be available in the `ImageInfo.acquisitionInfo` property of the resulting image.",
+          "type": "object",
+          "additionalProperties": {}
+        }
+      }
+    },
+    "BatteryInfo": {
+      "description": "Contains information about the current state of the battery in the device if applicable.",
+      "type": "object",
+      "properties": {
+        "hasBattery": {
+          "description": "Flag indicating if the device is battery powered",
+          "type": "boolean"
+        },
+        "percentRemaining": {
+          "description": "A number in the range 0-100 indicating the percentage of battery power remaining",
+          "type": "number",
+          "format": "float"
+        },
+        "level": {
+          "description": "A coarse description of the battery power level. May be used to update a color scheme in the user interface \n  * `Low` - The battery is low and should be recharged\n  * `Good` - The battery level is sufficient\n  * `Full` - The battery was recently recharged\n",
+          "type": "string",
+          "enum": [
+            "Low",
+            "Good",
+            "Full"
+          ]
+        }
+      }
+    },
+    "DeviceInfo": {
+      "description": "Detailed information about an intraoral device (sensor interface)",
+      "type": "object",
+      "properties": {
+        "deviceId": {
+          "description": "Unique Id of the device",
+          "type": "string"
+        },
+        "name": {
+          "description": "Descriptive name of the device",
+          "type": "string"
+        },
+        "iconUrl": {
+          "description": "Url for an icon representing the device",
+          "type": "string"
+        },
+        "hasSensor": {
+          "description": "Flag indicating if a sensor is connected to this device",
+          "type": "boolean"
+        },
+        "status": {
+          "$ref": "#/$defs/DeviceStatus"
+        },
+        "interfaceType": {
+          "description": "The interface used to connect the device to the system. For example, a USB device may report *usb*, while a network based device may report *network*.",
+          "type": "string"
+        },
+        "modelName": {
+          "description": "Manufacturer's model name",
+          "type": "string"
+        },
+        "serialNumber": {
+          "description": "Serial number of the device",
+          "type": "string"
+        },
+        "version": {
+          "description": "Version of software running on the device",
+          "type": "string"
+        },
+        "battery": {
+          "$ref": "#/$defs/BatteryInfo"
+        }
+      }
+    },
+    "DeviceStatus": {
+      "description": "Describes the current status of the device:\n  * `Available` - Device is available for an acquisition\n  * `InUse` - Device is currently being used for an acquisition\n  * `Unavailable` - Device is not available at this time\n  * `Error` Device encountered an unspecified error\n  \n  The current status must be `Available` in order to use it for an acquisition. If the device status returns `InUse`, it indicates that the device is currently being used for an acquisition.\n",
+      "type": "string",
+      "enum": [
+        "Available",
+        "InUse",
+        "Unavailable",
+        "Error"
+      ]
+    },
+    "ExposureInfo": {
+      "description": "Describes the quality of the exposure. The optimal range is defined by [`low`, `high`], with an optimal exposure value defined by `optimal` If the exposure `value` is higher than the optimal range, the user could reduce the x-ray exposure to improve image quality. Likewise, if the value is lower than the optimal range, the user could increase the x-ray exposure to improve image quality.",
+      "type": "object",
+      "properties": {
+        "min": {
+          "description": "The minimum value of the exposure scale",
+          "type": "number",
+          "format": "double"
+        },
+        "max": {
+          "description": "The maximum value of the exposure scale",
+          "type": "number",
+          "format": "double"
+        },
+        "low": {
+          "description": "The low end of the optimal exposure range",
+          "type": "number",
+          "format": "double"
+        },
+        "high": {
+          "description": "The high end of the optimal exposure range",
+          "type": "number",
+          "format": "double"
+        },
+        "optimum": {
+          "description": "The optimal value for a good exposure in the range [low, high]",
+          "type": "number",
+          "format": "double"
+        },
+        "value": {
+          "description": "The measured exposure value.",
+          "type": "number",
+          "format": "double"
+        }
+      }
+    },
+    "HashInfo": {
+      "description": "A hash used to verify integrity of pixel data.",
+      "type": "object",
+      "properties": {
+        "alg": {
+          "description": "Algorithm used to compute the hash.",
+          "type": "string",
+          "enum": [
+            "MD5",
+            "SHA256"
+          ]
+        },
+        "hash": {
+          "description": "The hash value",
+          "type": "string"
+        }
+      }
+    },
+    "LutInfo": {
+      "description": "Describes the lookup table (LUT) mapping applied to an image. Images acquired by this service may be mapped using a non-linear LUT in order to provide an image suitable for presentation (see the `applyLut` property of `AcquisitionInfo`). The LUT is created according to the following equation:\n\n  Y = m(x&prime;<sup>&gamma;</sup>) + b\n  \n  where\n  * m is the slope\n  * b is the offset\n  * &gamma; is the gamma value\n  * x&prime; is a normalized pixel scaled to the range [0,1]\n\nIf desired, the original pixel data (X) can be recovered from the mapped pixel (Y) using the LutInfo:\n  \n  X = (X<sub>max</sub> - X<sub>min</sub>) * [(Y - b) / m]<sup>1/&gamma;</sup> + X<sub>min</sub>\n  \n  where\n  * m is the slope\n  * b is the offset\n  * &gamma; is the gamma value\n  * X<sub>min</sub> is the minimum gray value\n  * X<sub>max</sub> is the maximum gray value\n\nIt is typical for the minimum gray value to be larger than the maximum gray level. This way, the LUT mapping produces an inverted non-linear optimized image.\n",
+      "type": "object",
+      "properties": {
+        "gamma": {
+          "description": "Gamma value used in map",
+          "type": "number",
+          "format": "double"
+        },
+        "slope": {
+          "description": "Slope value used in map",
+          "type": "number",
+          "format": "double"
+        },
+        "offset": {
+          "description": "Offset value used in map",
+          "type": "number",
+          "format": "double"
+        },
+        "totalGrays": {
+          "description": "Total number of gray values in original (unmapped) image",
+          "type": "number",
+          "format": "integer"
+        },
+        "minimumGray": {
+          "description": "Minimum gray value in original (unmapped) image",
+          "type": "number",
+          "format": "integer"
+        },
+        "maximumGray": {
+          "description": "Maximum gray value in original (unmapped) image",
+          "type": "number",
+          "format": "integer"
+        }
+      }
+    },
+    "SensorInfo": {
+      "description": "Detailed information about an intraoral sensor.",
+      "type": "object",
+      "properties": {
+        "modelName": {
+          "description": "Manufacturer's model name of the sensor",
+          "type": "string"
+        },
+        "serialNumber": {
+          "description": "Serial number of sensor",
+          "type": "string"
+        },
+        "brand": {
+          "description": "Branding information of sensor",
+          "type": "string"
+        },
+        "family": {
+          "description": "Product family of sensor",
+          "type": "string"
+        },
+        "size": {
+          "description": "Sensor size",
+          "type": "number",
+          "enum": [
+            0,
+            1,
+            2
+          ]
+        },
+        "width": {
+          "description": "Width of sensor in pixels",
+          "type": "number"
+        },
+        "height": {
+          "description": "Height of sensor in pixels",
+          "type": "number"
+        },
+        "supportsBinning": {
+          "description": "Flag indicating if the sensor supports Binning (see `AcquisitionInfo`)",
+          "type": "boolean"
+        },
+        "version": {
+          "description": "Version of software running on the sensor",
+          "type": "string"
+        }
+      }
+    }
+  }
+}

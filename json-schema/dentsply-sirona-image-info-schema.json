@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/dentsply-sirona/main/json-schema/dentsply-sirona-image-info-schema.json",
+  "title": "ImageInfo",
+  "description": "Describes information about the image used to create an `ImageResource`. This information should be obtained directly from the corresponding `ImageInfo` object of the image acquired using the DSIO Modality API. Note that this object is a subset of the DSIO Modality API, thus allowing API consumers to use the same object for both.\n",
+  "x-generated": "2026-10-12",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/dentsply-sirona-images-api-openapi.yml#/components/schemas/ImageInfo",
+  "type": "object",
+  "properties": {
+    "acquisitionInfo": {
+      "description": "Describes information regarding the acquisition from the DSIO Modality API.",
+      "type": "object",
+      "properties": {
+        "binning": {
+          "description": "The binning mode used to acquire the image. When binning mode is set to Binned2x2, the sensor combines 4 pixels in a 2x2 neighborhood to create a single pixel. The resulting image is 1/4th the size of an Unbinned image, but with lower resolution. Note that some sensors may not support binning, in which case the binning property cannot be changed.\n",
+          "type": "string",
+          "enum": [
+            "Unbinned",
+            "Binned2x2"
+          ]
+        }
+      }
+    },
+    "lutInfo": {
+      "description": "Describes the lookup table (LUT) mapping applied to an image. This information should be obtained from the ImageInfo of the image that was acquired using the DSIO Modality API.\n",
+      "type": "object",
+      "properties": {
+        "gamma": {
+          "description": "Gamma value used in map",
+          "type": "number",
+          "format": "double"
+        },
+        "slope": {
+          "description": "Slope value used in map",
+          "type": "number",
+          "format": "double"
+        },
+        "offset": {
+          "description": "Offset value used in map",
+          "type": "number",
+          "format": "double"
+        },
+        "totalGrays": {
+          "description": "Total number of gray values in original (unmapped) image",
+          "type": "number",
+          "format": "integer"
+        },
+        "minimumGray": {
+          "description": "Minimum gray value in original (unmapped) image",
+          "type": "number",
+          "format": "integer"
+        },
+        "maximumGray": {
+          "description": "Maximum gray value in original (unmapped) image",
+          "type": "number",
+          "format": "integer"
+        }
+      }
+    }
+  }
+}

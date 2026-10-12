@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/dentsply-sirona/main/json-schema/dentsply-sirona-acquisition-session-schema.json",
+  "title": "AcquisitionSession",
+  "description": "Information about an active acquisition session. This object is similar to AcquisitionSessionInfo, but with the addition of the session Id.",
+  "x-generated": "2026-10-12",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/dentsply-sirona-images-api-openapi.yml#/components/schemas/AcquisitionSession",
+  "type": "object",
+  "properties": {
+    "sessionId": {
+      "description": "Unique Id for the acquisition session",
+      "type": "string"
+    },
+    "deviceId": {
+      "description": "Unique Id of the device",
+      "type": "string"
+    },
+    "clientName": {
+      "description": "A client provided string used to identify the client that created this session",
+      "type": "string"
+    },
+    "createdOn": {
+      "description": "Timestamp indicating the time that the session was created.",
+      "type": "string",
+      "format": "date-time"
+    },
+    "context": {
+      "description": "An arbitrary object that can be used to store custom information about an acquisition session.",
+      "type": "object",
+      "additionalProperties": {}
+    }
+  }
+}

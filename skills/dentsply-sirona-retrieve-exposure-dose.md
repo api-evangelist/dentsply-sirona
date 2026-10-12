@@ -1,5 +1,5 @@
 ---
-name: Retrieve intraoral X-ray exposure dose records
+name: dentsply-sirona-retrieve-exposure-dose
 description: >-
   Read exposure dose data from an intraoral X-ray tube generator so it can be stored with the
   patient's media and dental record, using the Intraoral Exposure API.

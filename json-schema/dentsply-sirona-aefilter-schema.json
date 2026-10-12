@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/dentsply-sirona/main/json-schema/dentsply-sirona-aefilter-schema.json",
+  "title": "AEFilter",
+  "description": "Parameters used to apply the AE filter. This filter is optimized for images acquired from Xios AE and Schick AE sensors.\n",
+  "x-generated": "2026-10-12",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/dentsply-sirona-filters-api-openapi.yml#/components/schemas/AEFilter",
+  "type": "object",
+  "properties": {
+    "task": {
+      "description": "The task associated with the filter",
+      "type": "string",
+      "enum": [
+        "general",
+        "endodontic",
+        "periodontic",
+        "restorative"
+      ]
+    },
+    "sharpness": {
+      "description": "The sharpness to apply to the image expressed as a percentage in the range 0-100.",
+      "type": "number",
+      "format": "float",
+      "minimum": 0,
+      "maximum": 100
+    }
+  }
+}

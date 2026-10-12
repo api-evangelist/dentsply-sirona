@@ -1,0 +1,120 @@
+generated: '2026-10-12'
+method: derived
+source: the pre-flight dossier, apis.yml pointers, spec servers, well-known, vendors -- nothing fetched here
+generator: derive-hosts.py
+summary:
+  hosts: 9
+  own: 3
+  other_domain: 4
+  platform: 2
+  roles:
+  - api
+  - marketing
+  - other
+  - portal
+  - source
+  - status
+  - website
+hosts:
+- host: api.dscore.com
+  found_by:
+  - apis[]
+  types: []
+  serves:
+  - api
+  registrable_domain: dscore.com
+  role: api
+  relation: other-domain
+- host: careers.dentsplysirona.com
+  found_by:
+  - pointer
+  types:
+  - Careers
+  serves: []
+  registrable_domain: dentsplysirona.com
+  role: marketing
+  relation: own
+- host: github.com
+  found_by:
+  - pointer
+  types:
+  - GitHubOrganization
+  - GitHub Imaging
+  serves: []
+  registrable_domain: github.com
+  role: source
+  relation: platform
+- host: investor.dentsplysirona.com
+  found_by:
+  - pointer
+  types:
+  - Investors
+  serves: []
+  registrable_domain: dentsplysirona.com
+  role: other
+  relation: own
+- host: open.dscore.com
+  found_by:
+  - pointer
+  - apis[]
+  types:
+  - DeveloperPortal
+  - Documentation
+  - SignUp
+  - Open Platform
+  serves:
+  - docs
+  registrable_domain: dscore.com
+  role: portal
+  relation: other-domain
+- host: service.dscore.com
+  found_by:
+  - pointer
+  types:
+  - Service Portal
+  serves: []
+  registrable_domain: dscore.com
+  role: other
+  relation: other-domain
+- host: status.dscore.com
+  found_by:
+  - pointer
+  types:
+  - StatusPage
+  serves: []
+  registrable_domain: dscore.com
+  role: status
+  relation: other-domain
+- host: www.dentsplysirona.com
+  found_by:
+  - pointer
+  - vendor-detect
+  types:
+  - Security
+  - Pricing
+  - Support
+  - Website
+  - USA Website
+  - DS Core Marketing
+  - Connected Dentistry
+  - Connect Software
+  - Newsroom
+  - Sustainability
+  - Contact
+  - TermsOfService
+  - PrivacyPolicy
+  serves:
+  - cdn
+  vendor: fastly
+  registrable_domain: dentsplysirona.com
+  role: website
+  relation: own
+- host: www.linkedin.com
+  found_by:
+  - pointer
+  types:
+  - LinkedIn
+  serves: []
+  registrable_domain: linkedin.com
+  role: other
+  relation: platform

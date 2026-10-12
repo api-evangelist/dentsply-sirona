@@ -1,5 +1,5 @@
 ---
-name: Apply a Dentsply Sirona intraoral image filter
+name: dentsply-sirona-apply-image-filter
 description: >-
   Take a 16-bit grayscale intraoral image — uploaded, or referenced from a live modality session —
   and apply the Select, Supreme or AE filter using the Intraoral Imaging Filters API, then clean up

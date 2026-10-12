@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/dentsply-sirona/main/json-schema/dentsply-sirona-generator-schema.json",
+  "title": "Generator",
+  "x-generated": "2026-10-12",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/dentsply-sirona-generators-api-openapi.yml#/components/schemas/Generator",
+  "type": "object",
+  "required": [
+    "id",
+    "name",
+    "manufacturer",
+    "model",
+    "serialNumber"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique Id assigned to this generator"
+    },
+    "name": {
+      "type": "string",
+      "description": "A friendly name used to refer this generator"
+    },
+    "manufacturer": {
+      "type": "string",
+      "description": "Manufacturer of the generator"
+    },
+    "model": {
+      "type": "string",
+      "description": "Model name of the generator"
+    },
+    "serialNumber": {
+      "type": "string",
+      "description": "Serial number of the generator"
+    }
+  }
+}

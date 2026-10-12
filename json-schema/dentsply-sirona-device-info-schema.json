@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/dentsply-sirona/main/json-schema/dentsply-sirona-device-info-schema.json",
+  "title": "DeviceInfo",
+  "description": "Detailed information about an intraoral device (sensor interface)",
+  "x-generated": "2026-10-12",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/dentsply-sirona-devices-api-openapi.yml#/components/schemas/DeviceInfo",
+  "type": "object",
+  "properties": {
+    "deviceId": {
+      "description": "Unique Id of the device",
+      "type": "string"
+    },
+    "name": {
+      "description": "Descriptive name of the device",
+      "type": "string"
+    },
+    "iconUrl": {
+      "description": "Url for an icon representing the device",
+      "type": "string"
+    },
+    "hasSensor": {
+      "description": "Flag indicating if a sensor is connected to this device",
+      "type": "boolean"
+    },
+    "status": {
+      "$ref": "#/$defs/DeviceStatus"
+    },
+    "interfaceType": {
+      "description": "The interface used to connect the device to the system. For example, a USB device may report *usb*, while a network based device may report *network*.",
+      "type": "string"
+    },
+    "modelName": {
+      "description": "Manufacturer's model name",
+      "type": "string"
+    },
+    "serialNumber": {
+      "description": "Serial number of the device",
+      "type": "string"
+    },
+    "version": {
+      "description": "Version of software running on the device",
+      "type": "string"
+    },
+    "battery": {
+      "$ref": "#/$defs/BatteryInfo"
+    }
+  },
+  "$defs": {
+    "BatteryInfo": {
+      "description": "Contains information about the current state of the battery in the device if applicable.",
+      "type": "object",
+      "properties": {
+        "hasBattery": {
+          "description": "Flag indicating if the device is battery powered",
+          "type": "boolean"
+        },
+        "percentRemaining": {
+          "description": "A number in the range 0-100 indicating the percentage of battery power remaining",
+          "type": "number",
+          "format": "float"
+        },
+        "level": {
+          "description": "A coarse description of the battery power level. May be used to update a color scheme in the user interface \n  * `Low` - The battery is low and should be recharged\n  * `Good` - The battery level is sufficient\n  * `Full` - The battery was recently recharged\n",
+          "type": "string",
+          "enum": [
+            "Low",
+            "Good",
+            "Full"
+          ]
+        }
+      }
+    },
+    "DeviceStatus": {
+      "description": "Describes the current status of the device:\n  * `Available` - Device is available for an acquisition\n  * `InUse` - Device is currently being used for an acquisition\n  * `Unavailable` - Device is not available at this time\n  * `Error` Device encountered an unspecified error\n  \n  The current status must be `Available` in order to use it for an acquisition. If the device status returns `InUse`, it indicates that the device is currently being used for an acquisition.\n",
+      "type": "string",
+      "enum": [
+        "Available",
+        "InUse",
+        "Unavailable",
+        "Error"
+      ]
+    }
+  }
+}

@@ -1,0 +1,16 @@
+generated: '2026-10-12'
+method: none
+source:
+- https://zapier.com/apps/dentsply-sirona/integrations
+- https://n8n.io/integrations/dentsply-sirona/
+- https://composio.dev/toolkits/dentsply-sirona
+- https://monid.ai/tools/dentsply-sirona
+checked:
+- https://composio.dev/toolkits/dentsply-sirona
+- https://monid.ai/tools/dentsply-sirona
+- https://n8n.io/integrations/dentsply-sirona/
+- https://zapier.com/apps/dentsply-sirona/integrations
+summary: null
+marketplace_apps: []
+edges: []
+templates: []
