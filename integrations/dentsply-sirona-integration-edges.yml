@@ -1,5 +1,5 @@
 generated: '2026-10-12'
-method: none
+method: searched
 source:
 - https://zapier.com/apps/dentsply-sirona/integrations
 - https://n8n.io/integrations/dentsply-sirona/
@@ -7,10 +7,52 @@ source:
 - https://monid.ai/tools/dentsply-sirona
 checked:
 - https://composio.dev/toolkits/dentsply-sirona
+- https://lantern.healthit.gov/api/daily/download
 - https://monid.ai/tools/dentsply-sirona
 - https://n8n.io/integrations/dentsply-sirona/
+- https://www.fda.gov/medical-devices/software-medical-device-samd/artificial-intelligence-enabled-medical-devices
 - https://zapier.com/apps/dentsply-sirona/integrations
 summary: null
 marketplace_apps: []
-edges: []
+edges:
+- partner_name: FDA (AI-enabled medical devices)
+  partner: null
+  partner_match: register
+  type: contract
+  channel: regulator-register
+  relationship: standard-participant
+  direction: partner-built
+  evidence: https://www.accessdata.fda.gov/scripts/cdrh/cfdocs/cfpmn/pmn.cfm?ID=K260785
+  category: FDA-authorized AI-enabled medical device
+  contract_reference:
+    register: FDA AI-enabled medical devices list (fda.gov/media/178541 CSV)
+    standard: FDA AI-enabled medical device authorization
+    spec_file: null
+    role: fda-ai-device-holder
+    registered_name: Dentsply Sirona
+    register_id: K260785
+    matched_domain: dentsplysirona.com
+    matched_by: domain
+    identity: wikidata Q23781052 'Dentsply Sirona' P856 https://www.dentsplysirona.com/en
+    identity_source: wikidata P856 (labelled provenance step; Kin 2026-10-15 decision 1)
+    devices_sample:
+    - CEREC Ortho Software
+    - DS Core CBCT Anatomy
+    - DS Core Detect
+    - DS Core Diagnosis
+    certified_products:
+    - product: FDA-authorized AI-enabled device (Dental)
+      panel: Dental
+      lapsed: false
+      latest_authorization: '2018-01-11'
+    - product: FDA-authorized AI-enabled device (Radiology)
+      panel: Radiology
+      lapsed: false
+      latest_authorization: '2026-04-23'
+    signal_note: certified_products = one entry per lead review PANEL, never per device; devices and submission
+      numbers are context, never counted. The list carries current authorizations only, so lapsed is always false
+    detected_by: sweep-medtech.py
+    detected: '2026-10-18'
+  detected_by: sweep-medtech.py
+  first_seen: '2026-10-18'
 templates: []
