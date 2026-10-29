@@ -1,4 +1,4 @@
-# Dentsply Sirona (dentsply-sirona)
+# Dentsply Sirona
 
 <!-- API-EVANGELIST-PROVENANCE:BEGIN -->
 > ### About this repository
@@ -64,52 +64,184 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Dentsply Sirona is the world's largest manufacturer of professional dental products and technologies, providing comprehensive solutions for dentists, dental laboratories, and dental specialists worldwide. The company exposes developer integrations through DS Core, an open cloud platform, and through the Dentsply Sirona Imaging modality API for intraoral imaging hardware.
+Dentsply Sirona is the world's largest manufacturer of professional dental products and technologies, providing solutions for dentists, dental laboratories, and dental specialists worldwide. Its public API surface has two halves that behave nothing alike. DS Core is the company's open cloud platform, whose API lets practice-management vendors, lab-management vendors and DSOs integrate patient data synchronization, scan and imaging exchange, lab order routing, file and comment exchange, and SSO user provisioning — but its reference sits behind a partner login and no machine-readable contract for it is public. The Dentsply Sirona Imaging team, by contrast, publishes three real OpenAPI 3.0 contracts openly on GitHub under MIT and Apache licences — the Intraoral Imaging Modality API, the Intraoral Imaging Filters API, and the Intraoral Exposure API — covering 30 operations for driving intraoral sensors, filtering acquired images, and reading X-ray tube generator dose records. Notably, none of the three references DICOM.
 
-**URL:** [Visit APIs.yml URL](https://raw.githubusercontent.com/api-evangelist/dentsply-sirona/refs/heads/main/apis.yml)
+**Areas:** CAD/CAM · CEREC · Dental · DS Core · Imaging · Intraoral Imaging · Lab Management · Medical Devices · Practice Management · Fortune 1000
 
-## Scope
+## Dentsply Sirona on APIs.io
 
-- **Type:** Index
-- **Position:** Producer
-- **Access:** 3rd-Party
-- **xType:** company
+Everything profiled for Dentsply Sirona is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/dentsply-sirona/](https://apis.io/providers/dentsply-sirona/)** — or go straight to one of the APIs or properties below.
 
-## Tags
+### APIs (6)
 
-- CAD/CAM, CEREC, Dental, DS Core, Imaging, Intraoral Imaging, Lab Management, Practice Management
+- [DS Core API](https://apis.io/apis/dentsply-sirona/ds-core-api/) — DS Core is the open cloud platform from Dentsply Sirona that connects dental practices, laboratories, and DSOs through a single web-based experience. The DS…
+- [Dentsply Sirona Devices API](https://apis.io/apis/dentsply-sirona/dentsply-sirona-devices-api/) — The device management API provides methods to retrieve information, such as names, icons and status for devices.
+- [Dentsply Sirona Exposures API](https://apis.io/apis/dentsply-sirona/dentsply-sirona-exposures-api/) — Exposure data from generators
+- [Dentsply Sirona Filters API](https://apis.io/apis/dentsply-sirona/dentsply-sirona-filters-api/) — Filters that can be applied to image resources
+- [Dentsply Sirona Generators API](https://apis.io/apis/dentsply-sirona/dentsply-sirona-generators-api/) — Intraoral X-ray tube generators
+- [Dentsply Sirona Images API](https://apis.io/apis/dentsply-sirona/dentsply-sirona-images-api/) — Manage image resources for processing
 
-## Timestamps
+### Published properties
 
-- **Created:** 2026-03-24
-- **Modified:** 2026-04-28
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
 
-## APIs
+#### AsyncAPI (1)
 
-### DS Core API
-The open cloud platform connecting dental practices, laboratories, and DSOs with PMS, LMS, and Enterprise integrations.
+Event-driven and webhook contracts.
 
-**Human URL:** [DS Core Open Platform](https://open.dscore.com/)
+- [Dentsply Sirona Event Surface](https://apis.io/asyncapis/dentsply-sirona/dentsply-sirona-event-surface/)
 
-### Dentsply Sirona Intraoral Imaging Modality API
-Reference protocol and client for driving Dentsply Sirona intraoral imaging hardware from third-party software.
+#### MCP servers (1)
 
-**Human URL:** [dsio-modality-api on GitHub](https://github.com/dsimaging/dsio-modality-api)
+Model Context Protocol servers that expose the API to agents.
 
-## Common Properties
+- [dentsply-sirona-intraoral](https://apis.io/servers/dentsply-sirona/dentsply-sirona-intraoral/)
 
-- [Website](https://www.dentsply-sirona.com)
-- [USA Website](https://www.dentsplysirona.com/en-us)
-- [Open Platform](https://open.dscore.com/)
-- [DS Core Marketing](https://www.dentsplysirona.com/en-us/discover/discover-by-brand/ds-core.html)
-- [Connected Dentistry](https://www.dentsplysirona.com/en/lp/connected-dentistry.html)
-- [GitHub Imaging](https://github.com/dsimaging)
-- [Investors](https://investor.dentsplysirona.com)
-- [JSON-LD](json-ld/dentsply-sirona-context.jsonld)
-- [Vocabulary](vocabulary/dentsply-sirona-vocabulary.yml)
-- [Capabilities](capabilities/dentsply-sirona-capabilities.yml)
+#### Agentic access (1)
 
-## Maintainers
+Which operations an agent can call, which act, and which need a human in the loop.
 
-- **FN:** Kin Lane
-- **Email:** kin@apievangelist.com
+- [Dentsply Sirona Agentic Access](https://apis.io/agentic-access/dentsply-sirona/dentsply-sirona-agentic-access/)
+
+#### JSON Schema (15)
+
+The data models the API reads and writes.
+
+- [AcquisitionInfo](https://apis.io/schemas/dentsply-sirona/dentsply-sirona-acquisition-info/)
+- [AcquisitionSession](https://apis.io/schemas/dentsply-sirona/dentsply-sirona-acquisition-session/)
+- [AcquisitionStatus](https://apis.io/schemas/dentsply-sirona/dentsply-sirona-acquisition-status/)
+- [AEFilter](https://apis.io/schemas/dentsply-sirona/dentsply-sirona-aefilter/)
+- [DeviceEventData](https://apis.io/schemas/dentsply-sirona/dentsply-sirona-device-event-data/)
+- [DeviceInfo](https://apis.io/schemas/dentsply-sirona/dentsply-sirona-device-info/)
+- [Exposure](https://apis.io/schemas/dentsply-sirona/dentsply-sirona-exposure/)
+- [Generator](https://apis.io/schemas/dentsply-sirona/dentsply-sirona-generator/)
+- [Heartbeat](https://apis.io/schemas/dentsply-sirona/dentsply-sirona-heartbeat/)
+- [ImageInfo](https://apis.io/schemas/dentsply-sirona/dentsply-sirona-image-info/)
+- [ImageInfo_2](https://apis.io/schemas/dentsply-sirona/dentsply-sirona-image-info-2/)
+- [ImageResource](https://apis.io/schemas/dentsply-sirona/dentsply-sirona-image-resource/)
+- [SelectFilter](https://apis.io/schemas/dentsply-sirona/dentsply-sirona-select-filter/)
+- [SensorInfo](https://apis.io/schemas/dentsply-sirona/dentsply-sirona-sensor-info/)
+- [SupremeFilter](https://apis.io/schemas/dentsply-sirona/dentsply-sirona-supreme-filter/)
+
+#### JSON-LD (1)
+
+Linked-data contexts for the provider's vocabulary.
+
+- [Dentsply Sirona Context](https://apis.io/jsonld/dentsply-sirona/dentsply-sirona-context/)
+
+#### Vocabulary (1)
+
+The provider's domain terms, defined.
+
+- [Dentsply Sirona Vocabulary](https://apis.io/vocabularies/dentsply-sirona/dentsply-sirona-vocabulary/)
+
+#### Overlays (3)
+
+OpenAPI overlays, including conversational phrasing for each operation.
+
+- [Dentsply Sirona Exposure Overlay](https://apis.io/overlays/dentsply-sirona/dentsply-sirona-exposure-overlay/)
+- [Dentsply Sirona Filters Overlay](https://apis.io/overlays/dentsply-sirona/dentsply-sirona-filters-overlay/)
+- [Dentsply Sirona Modality Overlay](https://apis.io/overlays/dentsply-sirona/dentsply-sirona-modality-overlay/)
+
+#### Governance rules (1)
+
+Spectral rulesets for the provider's contracts.
+
+- [Dentsply Sirona API Rules](https://apis.io/rules/dentsply-sirona/dentsply-sirona-rules/)
+
+#### Security (4)
+
+Authentication, trust centre, and vulnerability disclosure.
+
+- [Dentsply Sirona Authentication](https://apis.io/security/dentsply-sirona/dentsply-sirona-authentication/)
+- [Dentsply Sirona Domain Security](https://apis.io/security/dentsply-sirona/dentsply-sirona-domain-security/)
+- [Dentsply Sirona Trust Center](https://apis.io/security/dentsply-sirona/dentsply-sirona-trust-center/)
+- [Dentsply Sirona Vulnerability Disclosure](https://apis.io/security/dentsply-sirona/dentsply-sirona-vulnerability-disclosure/)
+
+#### Plans and pricing (1)
+
+Published plans, tiers and prices.
+
+- [Dentsply Sirona Plans Pricing](https://apis.io/plans/dentsply-sirona/dentsply-sirona-plans-pricing/)
+
+#### Rate limits (1)
+
+Published request limits.
+
+- [Dentsply Sirona Rate Limits](https://apis.io/rate-limits/dentsply-sirona/dentsply-sirona-rate-limits/)
+
+#### FinOps (1)
+
+What the API costs to run, by operation.
+
+- [Dentsply Sirona Finops](https://apis.io/finops/dentsply-sirona/dentsply-sirona-finops/)
+
+## Where to find this API
+
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
+
+- [Website](https://www.dentsplysirona.com)
+- [Documentation](https://open.dscore.com/)
+- [Pricing](https://www.dentsplysirona.com/en-us/explore/digital-dentistry/brands/ds-core.html)
+- [Sign up](https://open.dscore.com/auth/password/register)
+- [Support](https://www.dentsplysirona.com/en-us/support)
+- [Security](https://www.dentsplysirona.com/.well-known/security.txt)
+- [Terms of service](https://www.dentsplysirona.com/en-us/legal/terms-of-use.html)
+- [Privacy policy](https://www.dentsplysirona.com/en-us/legal/privacy-policy.html)
+- [GitHub](https://github.com/dsimaging)
+- [Status](https://status.dscore.com/)
+
+## API Evangelist rating
+
+**Kin Score 67.7** — exemplar · rubric 0.25.0 · scored 2026-10-23
+
+| Facet | Score |
+|---|---|
+| Discoverability | 72.3 |
+| Contract quality | 68.1 |
+| Contract governance | 33.3 |
+| Operational transparency | 44.7 |
+| Developer ergonomics | 75.6 |
+| Access clarity | 84.2 |
+
+**Agent readiness 24.7** — agent-aware
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | derived (partial credit) |
+| Reversibility Documented | — |
+| MCP Server | — |
+| Auth Clarity | bearer (partial credit) |
+| Idempotency | — |
+| Error Semantics | derived (partial credit) |
+| OpenAPI Examples | partial |
+| Rate Limit Signal | documented (partial credit) |
+| Event Surface Described | derived (partial credit) |
+| Agent Skills | derived (partial credit) |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | — |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | — |
+| Pagination Ratio | — |
+| Operation Distinctiveness | mostly |
+
+**Regulatory alignment 28.1** — Health
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/dentsply-sirona/](https://apis.io/providers/dentsply-sirona/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for Dentsply Sirona: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/dentsply-sirona/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
