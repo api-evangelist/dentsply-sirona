@@ -1,0 +1,87 @@
+# Pricing transcribed from the provider's own page — see provenance. Numbers are quoted, not derived.
+generated: '2026-10-28'
+method: searched
+source: https://www.dentsplysirona.com/en-us/explore/digital-dentistry/brands/ds-core.html
+sources:
+- https://www.dentsplysirona.com/en-us/explore/digital-dentistry/brands/ds-core.html
+provenance:
+  tool: engine/economics/harvest_pricing.py
+  run: 20261028T120612
+  grounding: every price_text was found verbatim in the fetched page text
+audience: business-product
+pricing_basis: tiered-subscription
+delivery:
+  delivery: managed
+  method: page
+  read: '2026-10-28'
+  managed_tier: LIGHT
+published: true
+note: DS Core cloud platform tiers with 3-month trial options; payment monthly by card/direct debit or
+  multi-year pre-payment via Sales Channel.
+plan_count: 4
+currency: USD
+plans:
+- name: ACCESS
+  price_text: At no cost
+  period: none
+  included_quota: Temporary storage, Connected scan upload with Primescan, Connected radiograph and CBCT
+    scan upload, Ordering
+- name: LIGHT
+  price_text: $19.95 /month*
+  price: 19.95
+  currency: USD
+  period: month
+  included_quota: Everything in Access; 1 TB Online Media Library; Canvas; SureSmile Simulator; Direct
+    PMS Integration
+- name: STANDARD
+  price_text: $99.95 /month
+  price: 99.95
+  currency: USD
+  period: month
+  included_quota: Everything in Light; 6 TB Online Media Library; Smart View; Smart View – Detect; CEREC
+    on DS Core designs; Manufacturing (up to 2 connected devices)
+- name: ADVANCED
+  price_text: $249.95 /month
+  price: 249.95
+  currency: USD
+  period: month
+  included_quota: Everything in Standard; 15 TB Online Media Library; CEREC on DS Core for Trios scans;
+    CEREC Design STL export; Manufacturing (unlimited connected devices)
+rate_limit_statements:
+- Uploaded files will be deleted after 7 days, if not used within an order. All files included in an order
+  will be deleted 30 days once order is completed.
+x-canonical:
+  generated: '2026-11-01'
+  vocabulary: engine/economics/plans-canonical.yml
+  models:
+  - subscription
+  units: []
+  plans:
+  - name: ACCESS
+    access: other
+    model: unstated
+    model_how: derived
+    units: []
+    periods:
+    - none
+  - name: LIGHT
+    access: other
+    model: subscription
+    model_how: derived
+    units: []
+    periods:
+    - month
+  - name: STANDARD
+    access: other
+    model: subscription
+    model_how: derived
+    units: []
+    periods:
+    - month
+  - name: ADVANCED
+    access: other
+    model: subscription
+    model_how: derived
+    units: []
+    periods:
+    - month
