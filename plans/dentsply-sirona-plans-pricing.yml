@@ -51,7 +51,7 @@ rate_limit_statements:
 - Uploaded files will be deleted after 7 days, if not used within an order. All files included in an order
   will be deleted 30 days once order is completed.
 x-canonical:
-  generated: '2026-11-02'
+  generated: '2026-11-06'
   vocabulary: engine/economics/plans-canonical.yml
   models:
   - subscription
